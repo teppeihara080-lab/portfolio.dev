@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Portfolio - Bento & Control Panel UI</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- ▼ SVG共通部品の定義（画面には直接表示されない） -->
+  <svg style="display: none;" aria-hidden="true">
+    <!-- 銘板（白いラベルプレート） -->
+    <symbol id="icon-plate" viewBox="0 0 120 36" preserveAspectRatio="none">
+      <rect x="1" y="1" width="118" height="34" fill="#ffffff" stroke="#555555" stroke-width="1.5" />
+      <circle cx="6" cy="6" r="1.5" fill="#888888" />
+      <circle cx="114" cy="6" r="1.5" fill="#888888" />
+      <circle cx="6" cy="30" r="1.5" fill="#888888" />
+      <circle cx="114" cy="30" r="1.5" fill="#888888" />
+    </symbol>
+
+    <!-- 押しボタンの黒い外枠（ベゼル） -->
+    <symbol id="icon-button-bezel" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="28" fill="#1a1a1a" stroke="#000000" stroke-width="2" />
+      <circle cx="32" cy="32" r="24" fill="#333333" />
+    </symbol>
+  </svg>
+
+  <!-- ▼ ページ全体の外側Gridコンテナ -->
+  <div class="layout-container">
+
+    <!-- ヘッダー（PCでは上部バー、スマホではロゴのみ上部・ナビは下部固定） -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#home" class="site-logo">PORTFOLIO<span>.DEV</span></a>
+
+        <!-- グローバルナビゲーション（スマホ：制御盤 / PC：モダンナビ） -->
+        <nav class="global-nav" aria-label="グローバルナビゲーション">
+          <ul class="nav-list">
+
+            <li class="nav-item" data-color="green">
+              <a href="#home" class="nav-link">
+                <div class="nameplate">
+                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
+                  <span class="nav-label">Home</span>
+                </div>
+                <div class="push-button-wrap" aria-hidden="true">
+                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
+                  <span class="button-cap"></span>
+                </div>
+              </a>
+            </li>
+
+            <li class="nav-item" data-color="blue">
+              <a href="#skills" class="nav-link">
+                <div class="nameplate">
+                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
+                  <span class="nav-label">Skills</span>
+                </div>
+                <div class="push-button-wrap" aria-hidden="true">
+                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
+                  <span class="button-cap"></span>
+                </div>
+              </a>
+            </li>
+
+            <li class="nav-item" data-color="yellow">
+              <a href="#works" class="nav-link">
+                <div class="nameplate">
+                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
+                  <span class="nav-label">Works</span>
+                </div>
+                <div class="push-button-wrap" aria-hidden="true">
+                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
+                  <span class="button-cap"></span>
+                </div>
+              </a>
+            </li>
+
+            <li class="nav-item" data-color="red">
+              <a href="#about" class="nav-link">
+                <div class="nameplate">
+                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
+                  <span class="nav-label">About</span>
+                </div>
+                <div class="push-button-wrap" aria-hidden="true">
+                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
+                  <span class="button-cap"></span>
+                </div>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="site-main">
+      <!-- ▼ 内側のGridコンテナ（Bento Boxレイアウト） -->
+      <section id="home" class="bento-card bento-large">
+        <div class="card-header">
+          <h2>Home / Concept</h2>
+          <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
+            <!-- テキスト文字ではなく、綺麗な6点ドットのSVGアイコンにする -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <circle cx="5.5" cy="3.5" r="1.2" />
+              <circle cx="10.5" cy="3.5" r="1.2" />
+              <circle cx="5.5" cy="8" r="1.2" />
+              <circle cx="10.5" cy="8" r="1.2" />
+              <circle cx="5.5" cy="12.5" r="1.2" />
+              <circle cx="10.5" cy="12.5" r="1.2" />
+            </svg>
+          </button>
+        </div>
+        <p>10年越しにWebエンジニアへ再挑戦中...</p>
+      </section>
+
+        <section id="skills" class="bento-card bento-skills">
+          <h2>Skills</h2>
+
+          <!-- カテゴリ1：現在学習中 -->
+          <div class="skill-group">
+            <h3 class="skill-group-title">Currently Learning（学習中）</h3>
+            <ul class="skill-list">
+              <li>
+                <button type="button" class="skill-badge is-active" data-skill="Vue.js" data-desc="コンポーネント指向のUI設計、リアクティブな状態管理を学習中。">
+                  <img src="images/icons/vue.svg" class="skill-icon" alt="" />
+                  <span>Vue.js</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="skill-badge" data-skill="Nuxt 4" data-desc="最新のディレクトリ構成やSSR/SSGの仕組み、モダンなフロントエンド開発を習得中。">
+                  <img src="images/icons/nuxt.svg" class="skill-icon" alt="" />
+                  <span>Nuxt 4</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="skill-badge" data-skill="HTML5 / CSS3 / SVG" data-desc="セマンティックなマークアップ、CSS Grid/Flexbox、SVGとCSS変数を用いた部品化を実装。">
+                  <img src="images/icons/html.svg" class="skill-icon" alt="" />
+                  <span>HTML/CSS/SVG</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- カテゴリ2：過去の実績・開発経験 -->
+          <div class="skill-group">
+            <h3 class="skill-group-title">Past Experience（過去の実績・経験）</h3>
+            <ul class="skill-list">
+              <li>
+                <button type="button" class="skill-badge" data-skill="C# (.NET)" data-desc="業務アプリケーション開発での実装経験あり。オブジェクト指向の基礎を習得。">
+                  <img src="images/icons/csharp.svg" class="skill-icon" alt="" />
+                  <span>C# (.NET)</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="skill-badge" data-skill="Java" data-desc="サーバーサイド開発および基本的なシステム構築の経験あり。">
+                  <img src="images/icons/java.svg" class="skill-icon" alt="" />
+                  <span>Java</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="skill-badge" data-skill="JavaScript (jQuery)" data-desc="DOM操作や非同期通信（Ajax）、UIの動的制御の実装経験あり。">
+                  <img src="images/icons/js.svg" class="skill-icon" alt="" />
+                  <span>JS (jQuery)</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="skill-badge" data-skill="Ruby on Rails" data-desc="MVCアーキテクチャを用いたWebアプリケーション開発の経験あり。">
+                  <img src="images/icons/rails.svg" class="skill-icon" alt="" />
+                  <span>Ruby on Rails</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- インタラクティブ詳細表示モニター -->
+          <div class="skill-detail-box" aria-live="polite">
+            <span class="detail-title" id="skill-detail-title">Vue.js</span>
+            <p class="detail-desc" id="skill-detail-desc">コンポーネント指向のUI設計、リアクティブな状態管理を学習中。</p>
+          </div>
+        </section>
+
+        <section id="works" class="bento-card bento-tall">
+          <h2>Works</h2>
+          <p>制作実績のプレビューカードが入ります。</p>
+          <p>制作実績のプレビューカードが入ります。</p>
+          <p>制作実績のプレビューカードが入ります。</p>
+        </section>
+
+        <section id="about" class="bento-card bento-wide">
+          <h2>About Me</h2>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+          <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
+        </section>
+      </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="site-footer">
+      <p>&copy; 2026 Portfolio Project</p>
+    </footer>
+
+  </div>
+</body>
+</html>
