@@ -25,6 +25,27 @@
       <circle cx="32" cy="32" r="28" fill="#1a1a1a" stroke="#000000" stroke-width="2" />
       <circle cx="32" cy="32" r="24" fill="#333333" />
     </symbol>
+
+    <!-- ドラッグハンドル（6点ドット） -->
+    <symbol id="icon-drag-handle" viewBox="0 0 16 16">
+      <circle cx="5.5" cy="3.5" r="1.2" />
+      <circle cx="10.5" cy="3.5" r="1.2" />
+      <circle cx="5.5" cy="8" r="1.2" />
+      <circle cx="10.5" cy="8" r="1.2" />
+      <circle cx="5.5" cy="12.5" r="1.2" />
+      <circle cx="10.5" cy="12.5" r="1.2" />
+    </symbol>
+
+    <!-- 昼モード（太陽）アイコン -->
+    <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </symbol>
+
+    <!-- 夜モード（月）アイコン -->
+    <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </symbol>
   </svg>
 
   <!-- ▼ ページ全体の外側Gridコンテナ -->
@@ -93,32 +114,37 @@
 
           </ul>
         </nav>
+
+        <!-- 昼夜モード切り替えスイッチ -->
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="夜モードに切り替え" aria-pressed="false" title="昼・夜モード切り替え">
+          <svg class="theme-icon theme-icon-sun" width="18" height="18" aria-hidden="true"><use href="#icon-sun" /></svg>
+          <svg class="theme-icon theme-icon-moon" width="18" height="18" aria-hidden="true"><use href="#icon-moon" /></svg>
+          <span class="theme-toggle-label">Day</span>
+        </button>
       </div>
     </header>
 
     <!-- メインコンテンツ -->
     <main class="site-main">
       <!-- ▼ 内側のGridコンテナ（Bento Boxレイアウト） -->
-      <section id="home" class="bento-card bento-large">
-        <div class="card-header">
-          <h2>Home / Concept</h2>
-          <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-            <!-- テキスト文字ではなく、綺麗な6点ドットのSVGアイコンにする -->
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <circle cx="5.5" cy="3.5" r="1.2" />
-              <circle cx="10.5" cy="3.5" r="1.2" />
-              <circle cx="5.5" cy="8" r="1.2" />
-              <circle cx="10.5" cy="8" r="1.2" />
-              <circle cx="5.5" cy="12.5" r="1.2" />
-              <circle cx="10.5" cy="12.5" r="1.2" />
-            </svg>
-          </button>
-        </div>
-        <p>10年越しにWebエンジニアへ再挑戦中...</p>
-      </section>
+      <div id="bento-grid" class="bento-grid">
+        <section id="home" class="bento-card bento-large">
+          <div class="card-header">
+            <h2>Home / Concept</h2>
+            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
+              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
+            </button>
+          </div>
+          <p>10年越しにWebエンジニアへ再挑戦中...</p>
+        </section>
 
         <section id="skills" class="bento-card bento-skills">
-          <h2>Skills</h2>
+          <div class="card-header">
+            <h2>Skills</h2>
+            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
+              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
+            </button>
+          </div>
 
           <!-- カテゴリ1：現在学習中 -->
           <div class="skill-group">
@@ -184,14 +210,24 @@
         </section>
 
         <section id="works" class="bento-card bento-tall">
-          <h2>Works</h2>
+          <div class="card-header">
+            <h2>Works</h2>
+            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
+              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
+            </button>
+          </div>
           <p>制作実績のプレビューカードが入ります。</p>
           <p>制作実績のプレビューカードが入ります。</p>
           <p>制作実績のプレビューカードが入ります。</p>
         </section>
 
         <section id="about" class="bento-card bento-wide">
-          <h2>About Me</h2>
+          <div class="card-header">
+            <h2>About Me</h2>
+            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
+              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
+            </button>
+          </div>
           <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
           <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
           <p>エンジニアとしてのプロフィールや学習記録をまとめるエリアです。</p>
