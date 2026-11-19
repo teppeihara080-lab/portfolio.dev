@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- 1. 最優先の基本設定 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- ↑はviewport-fitの挙動、端末のセーフエリア等についてよくわかってないかもしれないので、暫定 -->
   <title>Portfolio - Bento & Control Panel UI</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- 2. 外部接続の事前準備 ＆ JSの先行ダウンロード（defer） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="script.js" defer></script>
+
+  <!-- 3. スタイルシート（外部フォント → 自分のCSSの順） -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 4. ページ情報・ブラウザ制御 -->
+  <meta name="description" content="エンジニアの道を一度挫折したひとのポートフォリオです。現状で何ができるかを見ていただければ。">
+  <meta name="theme-color" content="#f4f5f7">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="format-detection" content="telephone=no">
+  
+
+  <!-- 5. ファビコン（絵文字でもよかったけど演習のためセットを配置。マニフェストはローカル直開きでCORSエラーが出るためコメントアウト） -->
+  <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🤖</text></svg>"> -->
+  <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+  <!-- <link rel="manifest" href="images/favicon/site.webmanifest"> -->
+
+  <!-- 6. OGP設定（Vercel公開時にURLを確定させて有効化） -->
+  <!--
+  <meta property="og:title" content="Portfolio - Bento & Control Panel UI">
+  <meta property="og:description" content="エンジニアの道を一度挫折したひとのポートフォリオです。現状で何ができるかを見ていただければ。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://たぶんVercelでホスティング/">
+  <meta property="og:image" content="https://たぶんVercelでホスティング/images/ogp.png">
+  <meta name="twitter:card" content="summary_large_image">
+  -->
 </head>
 <body>
 

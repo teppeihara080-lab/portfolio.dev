@@ -22,6 +22,12 @@ function initThemeToggle() {
     // <html data-theme="dark"> を設定すると、CSS側の夜モード変数が有効になる
     root.setAttribute('data-theme', theme);
 
+    // スマホブラウザのUIカラー（meta指定も切り替える）
+    const themeMeta = document.getElementById('theme-color-meta');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', isDark ? '#0f172a' : '#f4f5f7');
+    }
+
     if (toggleBtn) {
       // スクリーンリーダー（音声読み上げ）向けに現在の状態を伝える属性を更新
       toggleBtn.setAttribute('aria-pressed', String(isDark));
