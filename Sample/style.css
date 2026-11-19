@@ -29,6 +29,8 @@
   --panel-border: #666666;
   --handle-color: #9ca3af;
   --handle-hover-text: #374151;
+  --bubble-bg: #1f2937; /* ロボットの吹き出し背景（昼は濃い色で引き締める） */
+  --bubble-text: #ffffff;
 }
 
 :root[data-theme="dark"] {
@@ -56,6 +58,8 @@
   --panel-border: #1f2937;
   --handle-color: #64748b;
   --handle-hover-text: #f1f5f9;
+  --bubble-bg: #f8fafc;      /* 夜は明るい吹き出しにしてコントラストを確保 */
+  --bubble-text: #0f172a;
 }
 
 /* 制御盤ボタンの色バリエーション（HTMLの data-color 属性で切り替え） */
@@ -401,7 +405,198 @@ body {
 
 
 /* ==========================================================================
-   6. Skillsカード専用部品（バッジ & 詳細表示モニター）
+   6. Homeカード専用部品（ダンボールロボット & 吹き出し）
+   ========================================================================== */
+#home {
+  /* カード内を「1行目:タイトル / 2行目:概要 / 3行目:ロボット＋文章」の縦3段に分割。
+     3行目を 1fr にすることで、カード背面の余った高さをすべて3行目に割り当て、上部浮きを防ぐ */
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  /* コンテナクエリの基準に設定：画面幅ではなく「このカード自身の横幅」でレイアウトを切り替えられる */
+  container-type: inline-size;
+  container-name: home-card;
+}
+
+.home-lead {
+  margin-top: 0;
+  color: var(--text-desc);
+}
+
+/* Homeカード下部（3行目の 1fr エリア）：上下中央に配置する */
+.home-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 縦方向の中央に揃える */
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.robot-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 右側（狭い時は下側）の説明文エリア */
+.home-article {
+  font-size: 0.92rem;
+  color: var(--text-desc);
+  line-height: 1.75;
+}
+
+.home-article p {
+  margin: 0 0 12px 0;
+}
+
+.home-article p:last-child {
+  margin-bottom: 0;
+}
+
+.home-article-title {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+/* コンテナクエリ：#home カード自身の幅が 540px 以上ある時だけ「左：ロボ」「右：文章」の横並びにする。
+   ※画面幅（@media）と違い、中途半端な端末幅でカードが狭い時は自動で縦並びになり文字が潰れない */
+@container home-card (min-width: 540px) {
+  .home-body {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .robot-area {
+    flex: 0 0 240px; /* ロボット側を240pxで固定し、文章に押されて縮まないようにする */
+  }
+
+  .robot-wrapper {
+    width: 240px;
+  }
+
+  .home-article {
+    flex: 1; /* 残りの横幅をすべて文章エリアに割り当てる */
+  }
+}
+
+/* 吹き出しの配置枠 */
+.speech-bubble-slot {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.speech-bubble {
+  position: relative;
+  display: flex;
+  align-items: center; /* 2〜3行のセリフでも吹き出し内の上下中央に収める */
+  width: 100%;
+  max-width: 320px;
+  /* 4行分の高さ（line-height 1.5 × 4行 = 6em）＋ 上下padding（12px × 2 = 24px）で高さを確保し、
+     スマホ・PCどちらの画面幅でもセリフ切り替え時に吹き出しが上下にガタつかないようにする */
+  min-height: calc(1.5em * 4 + 24px);
+  background-color: var(--bubble-bg);
+  color: var(--bubble-text);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  text-align: left;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.5;
+  /* 四角形と下の三角形（しっぽ）を合わせた輪郭に影をつける */
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.speech-bubble p {
+  margin: 0;
+}
+
+/* 吹き出しの下向き三角形（しっぽ）をCSSのborderトリックで作る */
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: var(--bubble-bg) transparent transparent transparent;
+  transition: border-color 0.25s ease;
+}
+
+.robot-wrapper {
+  position: relative;
+  display: inline-block;
+  width: min(260px, 100%);
+  aspect-ratio: 1 / 1; /* 正方形の比率を維持する */
+}
+
+/* スプライト画像（4表情が横並びになった1枚の画像）を切り替えて表示 */
+.robot-sprite {
+  width: 100%;
+  height: 100%;
+  background-image: url("images/robot-sprite.png");
+  /* 横4コマなので、表示枠に対して横幅400%・縦100%に拡大して1コマ分だけ見せる */
+  background-size: 400% 100%;
+  background-repeat: no-repeat;
+  transition: filter 0.2s ease;
+}
+
+/* 当たり判定（.hitbox）にカーソルが乗った時、透明ではないロボットの輪郭だけをふわっと光らせる */
+.robot-wrapper:has(.hitbox:hover) .robot-sprite {
+  filter: brightness(1.06) drop-shadow(0 0 8px rgba(96, 165, 250, 0.55));
+}
+
+/* 表情が切り替わった瞬間にJSから付与するノイズ風アニメーション */
+.robot-sprite.is-animating {
+  animation: glitch-fade 0.25s ease-out;
+}
+
+@keyframes glitch-fade {
+  0% {
+    opacity: 0;
+    filter: blur(4px) contrast(150%);
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(1px) contrast(120%);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) contrast(100%);
+    transform: scale(1);
+  }
+}
+
+/* 4コマの横位置（0%, 33.333%, 66.666%, 100%）で表情を切り替え */
+.face-normal { background-position: 0% 0; }
+.face-smile  { background-position: 33.333% 0; }
+.face-active { background-position: 66.666% 0; }
+.face-error  { background-position: 100% 0; }
+
+/* 透明な当たり判定ボタン（頭部・胴体・脚部の3分割） */
+.bento-card .hitbox {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  /* リンクの指マークではなく「調査・観察する」虫眼鏡カーソルにする */
+  cursor: zoom-in;
+}
+.hitbox-head { top: 0%;  height: 47%; }
+.hitbox-body { top: 47%; height: 33%; }
+.hitbox-legs { top: 80%; height: 20%; }
+
+
+/* ==========================================================================
+   7. Skillsカード専用部品（バッジ & 詳細表示モニター）
    ========================================================================== */
 .bento-skills {
   display: flex;
@@ -487,9 +682,263 @@ body {
   line-height: 1.45;
 }
 
+/* --- Status & Linksカード（天気API ＋ 外部リンク枠） --- */
+.bento-weather {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.weather-box {
+  padding: 12px 14px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.weather-box-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.weather-location {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.weather-credit-link {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.weather-credit-link:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+.weather-body {
+  padding: 4px 0;
+}
+
+.weather-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weather-icon {
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.weather-temp {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+}
+
+.weather-sub {
+  text-align: right;
+  font-size: 0.82rem;
+  color: var(--text-desc);
+}
+
+.weather-sub p {
+  margin: 2px 0;
+}
+
+.weather-condition {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.weather-status {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.weather-status.is-error {
+  color: #ef4444;
+}
+
+/* 下部：外部リンク・コンタクト枠 */
+.links-box {
+  margin-top: auto;
+}
+
+.links-title {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.social-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.social-link {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease, background-color 0.25s ease;
+}
+
+.social-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.social-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.social-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 
 /* ==========================================================================
-   7. フッター（スマホは下部固定の制御盤ナビ分の余白を確保）
+   8. Works・Aboutカード専用部品（独立Workカード＆年表）
+   ========================================================================== */
+.bento-work {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 画面イメージのプレースホルダー枠（16:9の比率で固定） */
+.work-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--bg-subtle);
+  border: 1px dashed var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* あとから <img> を入れた時に、枠いっぱいに綺麗に収める設定 */
+.work-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.work-title {
+  margin: 0 0 6px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.work-desc {
+  margin: 0 0 12px 0;
+  font-size: 0.85rem;
+  color: var(--text-desc);
+  line-height: 1.55;
+}
+
+.work-tag {
+  margin-top: auto; /* 解説文の長さが違っても、使用技術の位置をカード下端に揃える */
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.about-subtitle {
+  margin: 0 0 10px 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.timeline-list,
+.cert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-desc);
+}
+
+.timeline-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-period {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.cert-list li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.cert-list li::before {
+  content: "・";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+
+/* ==========================================================================
+   9. フッター（スマホは下部固定の制御盤ナビ分の余白を確保）
    ========================================================================== */
 .site-footer {
   text-align: center;
@@ -501,7 +950,7 @@ body {
 
 
 /* ==========================================================================
-   8. デスクトップ表示（画面幅 768px 以上でモダンUIに切り替え）
+   10. デスクトップ表示（画面幅 768px 以上でモダンUIに切り替え）
    ========================================================================== */
 @media (min-width: 768px) {
   /* --- ヘッダー：画面上部にすりガラス風で固定 --- */
@@ -603,17 +1052,30 @@ body {
     gap: 24px;
   }
 
+  /* 1段目：Home（3カラム全幅のヒーローエリアとして、画面高さに収まるサイズ感を確保） */
   .bento-large {
+    grid-column: 1 / -1;
+    min-height: min(600px, calc(100dvh - 140px));
+  }
+
+  /* 2段目左：Skills（横2列幅を使うことでバッジが横に並び、縦の長さをコンパクトに抑える） */
+  .bento-skills {
     grid-column: span 2;
-    grid-row: span 2;
   }
 
-  .bento-tall {
-    grid-row: span 2;
+  /* 2段目右：Weather（1列幅でSkillsの右隣に配置） */
+  .bento-weather {
+    grid-column: span 1;
   }
 
+  /* 3段目：Workカード（それぞれ1列幅のグリッドアイテムとして3つ綺麗に横並びになる） */
+  .bento-work {
+    grid-column: span 1;
+  }
+
+  /* 3段目：About Me（3カラム全幅で経歴と資格をゆったり並べる） */
   .bento-wide {
-    grid-column: span 2;
+    grid-column: 1 / -1;
   }
 
   /* PCではカード全体（ボタンやリンクを除く）を掴んでドラッグできるためカーソルを変化 */
@@ -628,6 +1090,12 @@ body {
 
   .bento-card .drag-handle {
     cursor: grab;
+  }
+
+  /* --- Aboutカード内：PCでは経歴と資格を左右2列に並べる --- */
+  .about-grid {
+    grid-template-columns: 1.3fr 1fr;
+    gap: 24px;
   }
 
   /* --- フッター：ボトムナビが消えるので下部余白を通常に戻す --- */

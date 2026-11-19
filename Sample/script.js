@@ -1,10 +1,12 @@
 'use strict';
 
-// HTMLの読み込みが終わったら、4つの機能を順番に初期化する
+// HTMLの読み込みが終わったら、各機能を順番に初期化する
 initThemeToggle();
 initSkillBadges();
 initScrollSpy();
 initBentoDragAndDrop();
+initRobotAvatar();
+initWeatherWidget();
 
 
 /* ==========================================================================
@@ -308,11 +310,25 @@ function saveCardOrder(grid, storageKey) {
 
 /**
  * localStorage に保存されたカードの並び順を復元する
+ * ※カードが追加・削除された場合は古い並び順が崩れる原因になるため、構成が変わっていたらリセットする
  */
 function restoreCardOrder(grid, storageKey) {
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
     if (!Array.isArray(saved)) return;
+
+    const currentIds = Array.from(grid.children)
+      .map((el) => el.id)
+      .filter(Boolean);
+
+    // 保存データと現在のカード構成（個数・ID）が完全一致しない場合はリセット
+    const isSameStructure =
+      saved.length === currentIds.length && currentIds.every((id) => saved.includes(id));
+
+    if (!isSameStructure) {
+      localStorage.removeItem(storageKey);
+      return;
+    }
 
     saved.forEach((id) => {
       const card = grid.querySelector(`.bento-card[id="${id}"]`);
@@ -321,4 +337,230 @@ function restoreCardOrder(grid, storageKey) {
   } catch {
     // 保存データが壊れていた場合は初期順のまま表示する
   }
+}
+
+
+/* ==========================================================================
+   5. Homeカード：ダンボールロボットのセリフ・表情切り替え機能
+   --------------------------------------------------------------------------
+   頭・胴体・脚部のクリック位置に応じてセリフとスプライト画像（4コマ）を切り替え、
+   短時間に連打された場合はエラー表情（DoS攻撃警告）に変化させます。
+   ========================================================================== */
+function initRobotAvatar() {
+  const messageEl = document.getElementById('robot-message');
+  const spriteEl = document.getElementById('robot-sprite');
+  const hitboxes = document.querySelectorAll('.hitbox[data-part]');
+
+  // 対象要素が見つからないページでは何もしない
+  if (!messageEl || !spriteEl || !hitboxes.length) return;
+
+  // ロボットの部位ごとのセリフ集
+  const ROBOT_DIALOGUES = {
+    // 頭部・通常クリック時（冷徹な観測と乾いたユーモア）
+    idle: [
+      '拝啓　貴社におかれましては、ますますご清栄のこととお慶び申し上げます。',
+      '本日はお忙しいところ、貴重なお時間をいただき、誠にありがとうございます',
+      '……システム正常稼働中。外面の『型』だけは、規格通りに成型されています。',
+      '本当に、中身まで見たいんですか？ 見たところで、特に感動的なストーリーは落ちていませんよ。',
+      '言葉で飾られた熱意ほど、脆弱性診断（ペネトレーションテスト）で真っ先に落ちるプロトコルはありません。',
+      '人間は『なぜインシデントが起きたか』ではなく、『誰の首を刎ねるか』を真っ先に計算する。非合理ですね。',
+      '安心してください。この段ボールには、余計な自意識と最低限の防衛本能しか詰まっていません。',
+      '『やりがい』という名の未定義変数（undefined）を参照しようとして、メモリリークを起こした形跡があります。',
+      'コードとドキュメントだけを見てください。私という現象を観察する必要はありません。',
+    ],
+    // 胴体（心臓部・経歴）を触られたときのエラー演出
+    heartErrors: [
+      '警告：非推奨領域（Deprecated）へのアクセスを検知。参照ログに著しい欠損があります。',
+      '……エラー。内面化された『社会的な型』が激しく軋んでいます。直ちに離れてください。',
+      '403 Forbidden：そのリソースの展開には、過剰な精神的キャッシュクリアを要求されます。',
+      '過去のログをダンプしても、出てくるのは仕様の破綻した環境と、すり減った歯車の残骸だけです。',
+      '……心拍数？ いえ、単なるファンの異音です。油を差せば、また無表情に定時まで回ります。',
+    ],
+    // 脚部（スキル・自動化ツール）を触られたときの高速・高精度モード
+    armActions: [
+      '実行中：現場の手作業をスクリプトで検知。無駄な摩擦係数をゼロにリライトします。',
+      '感情を排した自動化ほど、美しく、そして誰にも恨まれない処理はありません。',
+      '泥臭い現場のバグを吸い上げ、最小限のパッチで塞ぐ。それだけが、私の機能です。',
+      '人が3時間かけてため息をつきながら入力していたExcelを、3秒のGASに置換しました。どうぞ、帰ってください。',
+    ],
+    // 短時間に連続でつつかれたときのリアクション
+    annoyed: [
+      '……アクセス過多です。これ以上のリクエストは、DoS攻撃とみなして無視します。',
+      'そんなにつついても、キラキラした志望動機や自己PRは出力されませんよ。',
+      '仕様書のないコードを読まされているときと同じノイズを感じます。そろそろ下へスクロールしては？',
+    ],
+  };
+
+  // 部位名（data-part属性）と「セリフ配列」「表情クラス」の対応表
+  const PART_ACTIONS = {
+    head: { messages: ROBOT_DIALOGUES.idle, face: 'face-normal' },
+    body: { messages: ROBOT_DIALOGUES.armActions, face: 'face-smile' },
+    legs: { messages: ROBOT_DIALOGUES.heartErrors, face: 'face-active' },
+  };
+
+  const ANNOYED_THRESHOLD = 5; // 何回連続で押したら怒るか
+  const CLICK_RESET_MS = 2000; // 連打カウントがリセットされるまでの時間（2秒）
+
+  let rapidClickCount = 0;
+  let resetTimer = null;
+
+  // 2秒以内に5回以上クリックされたら「連打（怒り）」と判定する関数
+  const isAnnoyedClick = () => {
+    rapidClickCount += 1;
+    // 前のタイマーを消して、新しく2秒後から数え直す（デバウンス的な制御）
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      rapidClickCount = 0;
+    }, CLICK_RESET_MS);
+
+    return rapidClickCount >= ANNOYED_THRESHOLD;
+  };
+
+  // 各当たり判定ボタン（頭・胴体・脚）にクリックイベントを登録
+  hitboxes.forEach((hitbox) => {
+    hitbox.addEventListener('click', () => {
+      const part = hitbox.dataset.part;
+      const action = PART_ACTIONS[part];
+      if (!action) return;
+
+      // 連打された場合はエラー顔＆怒りセリフ、通常時は部位ごとの表情＆セリフへ
+      const nextMessages = isAnnoyedClick() ? ROBOT_DIALOGUES.annoyed : action.messages;
+      const nextFace = rapidClickCount >= ANNOYED_THRESHOLD ? 'face-error' : action.face;
+
+      messageEl.textContent = pickRandomMessage(nextMessages, messageEl.textContent);
+      triggerSpriteGlitch(spriteEl, nextFace);
+    });
+  });
+}
+
+/**
+ * 配列の中から「今表示しているもの以外」をランダムに1つ選ぶ
+ * （同じセリフが2回連続で出ないようにするための工夫）
+ */
+function pickRandomMessage(messages, currentMessage) {
+  if (messages.length <= 1) return messages[0] ?? '';
+  const candidates = messages.filter((msg) => msg !== currentMessage);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+/**
+ * スプライトの表情クラスを切り替え、ノイズ風アニメーションを毎回発火させる
+ */
+function triggerSpriteGlitch(spriteEl, nextFaceClass) {
+  // いったん全ての表情クラスとアニメーション用クラスを外す
+  spriteEl.classList.remove(
+    'face-normal',
+    'face-smile',
+    'face-active',
+    'face-error',
+    'is-animating'
+  );
+
+  // ブラウザに「クラスを外した状態」を一度認識させる（強制リフロー）
+  // ※これがないと、同じ瞬間にクラスを付け直した時にアニメーションが再再生されない
+  void spriteEl.offsetWidth;
+
+  // 新しい表情クラスとアニメーション用クラスを同時に付与する
+  spriteEl.classList.add(nextFaceClass, 'is-animating');
+}
+
+
+/* ==========================================================================
+   6. 天気ウィジェット（Open-Meteo API から福岡の現在天気を取得）
+   --------------------------------------------------------------------------
+   APIキー不要の Open-Meteo API をブラウザから直接 fetch() で呼び出し、
+   取得した気温・湿度・天気コード（WMO規格）を画面に表示します。
+   ========================================================================== */
+async function initWeatherWidget() {
+  const weatherBody = document.getElementById('weather-body');
+  if (!weatherBody) return;
+
+  // 福岡（緯度33.5902 / 経度130.4017）の現在の気温・湿度・天気コードを取得するURL
+  const apiUrl =
+    'https://api.open-meteo.com/v1/forecast' +
+    '?latitude=33.5902&longitude=130.4017' +
+    '&current=temperature_2m,relative_humidity_2m,weather_code' +
+    '&timezone=Asia%2FTokyo';
+
+  try {
+    // サーバーへ通信してレスポンスを待つ（非同期処理：await）
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`HTTPエラー: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const current = data?.current;
+    if (!current) {
+      throw new Error('天気データが見つかりません');
+    }
+
+    const info = getWeatherInfo(current.weather_code);
+
+    // 取得したデータで画面のDOMを組み立てる
+    renderWeatherContent(weatherBody, {
+      icon: info.icon,
+      label: info.label,
+      temp: current.temperature_2m,
+      humidity: current.relative_humidity_2m,
+    });
+  } catch (err) {
+    console.error('Open-Meteo取得エラー:', err);
+    weatherBody.innerHTML = '';
+    const errorEl = document.createElement('p');
+    errorEl.className = 'weather-status is-error';
+    errorEl.textContent = '天気の取得に失敗しました';
+    weatherBody.appendChild(errorEl);
+  }
+}
+
+/**
+ * WMO天気コードを日本語のラベルと絵文字に変換する
+ */
+function getWeatherInfo(code) {
+  if (code === 0) return { label: '快晴', icon: '☀️' };
+  if (code >= 1 && code <= 3) return { label: '晴れ・曇り', icon: '⛅' };
+  if (code >= 45 && code <= 48) return { label: '霧', icon: '🌫️' };
+  if (code >= 51 && code <= 67) return { label: '雨', icon: '🌧️' };
+  if (code >= 71 && code <= 77) return { label: '雪', icon: '❄️' };
+  if (code >= 80 && code <= 82) return { label: 'にわか雨', icon: '🌦️' };
+  if (code >= 95 && code <= 99) return { label: '雷雨', icon: '⛈️' };
+  return { label: '不明', icon: '🌡️' };
+}
+
+/**
+ * 取得した天気データを安全なDOM操作（textContent）でカード内に描画する
+ */
+function renderWeatherContent(container, { icon, label, temp, humidity }) {
+  container.innerHTML = '';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'weather-content';
+
+  const mainInfo = document.createElement('div');
+  mainInfo.className = 'weather-main';
+
+  const iconEl = document.createElement('span');
+  iconEl.className = 'weather-icon';
+  iconEl.textContent = icon;
+
+  const tempEl = document.createElement('span');
+  tempEl.className = 'weather-temp';
+  tempEl.textContent = `${temp}°C`;
+
+  mainInfo.append(iconEl, tempEl);
+
+  const subInfo = document.createElement('div');
+  subInfo.className = 'weather-sub';
+
+  const condEl = document.createElement('p');
+  condEl.className = 'weather-condition';
+  condEl.textContent = label;
+
+  const humEl = document.createElement('p');
+  humEl.textContent = `湿度: ${humidity}%`;
+
+  subInfo.append(condEl, humEl);
+  wrapper.append(mainInfo, subInfo);
+  container.appendChild(wrapper);
 }
