@@ -5,12 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- ↑はviewport-fitの挙動、端末のセーフエリア等についてよくわかってないかもしれないので、暫定 -->
-  <title>Portfolio - Bento & Control Panel UI</title>
+  <title>BoxBot.Folio</title>
 
   <!-- 2. 外部接続の事前準備 ＆ JSの先行ダウンロード（defer） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <script src="script.js" defer></script>
+  <script src="js/dialogues.js" defer></script><!-- セリフデータ。ESmodule予定 -->
+  <script src="js/main.js" defer></script>
 
   <!-- 3. スタイルシート（外部フォント → 自分のCSSの順） -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
@@ -87,8 +88,9 @@
     <!-- ヘッダー（PCでは上部バー、スマホではロゴのみ上部・ナビは下部固定） -->
     <header class="site-header">
       <div class="header-inner">
-        <a href="#home" class="site-logo">PORTFOLIO<span>.DEV</span></a>
-
+        <h1 class="site-title">
+          <a href="#home" class="site-logo">BoxBot<span>.Folio</span></a>
+        </h1>
         <!-- グローバルナビゲーション（スマホ：制御盤 / PC：モダンナビ） -->
         <nav class="global-nav" aria-label="グローバルナビゲーション">
           <ul class="nav-list">
@@ -149,7 +151,7 @@
         </nav>
 
         <!-- 昼夜モード切り替えスイッチ -->
-        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="夜モードに切り替え" aria-pressed="false" title="昼・夜モード切り替え">
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="夜モードに切り替え" title="昼・夜モード切り替え">
           <svg class="theme-icon theme-icon-sun" width="18" height="18" aria-hidden="true"><use href="#icon-sun" /></svg>
           <svg class="theme-icon theme-icon-moon" width="18" height="18" aria-hidden="true"><use href="#icon-moon" /></svg>
           <span class="theme-toggle-label">Day</span>
@@ -169,8 +171,8 @@
             </button>
           </div>
           <p class="home-lead">
-            開発経験（3年）× 自治体・教育現場のICT支援（6年）。<br />
-            「作る」論理力と「支える」現場感覚を併せ持つ、エンジニア再挑戦ポートフォリオです。
+            開発経験 × 自治体・教育現場でのICT支援。<br>
+            「仕組みを考える」論理的思考と「使う・支える」現場感覚を持つteppeeの、エンジニア再挑戦中ポートフォリオです。
           </p>
 
           <!-- ▼ Home下部：Flexboxで「左：ロボット」「右：紹介文」を並べる -->
@@ -186,6 +188,7 @@
 
               <!-- ロボット本体（スプライト画像）＋ 透明な当たり判定（3分割） -->
               <div class="robot-wrapper">
+                <!-- aria-live="polite"：クリックでセリフが切り替わった際、現在の読み上げが終わってから新しい文章を音声案内させる -->
                 <div id="robot-sprite" class="robot-sprite face-normal" role="img" aria-label="案内ロボット"></div>
 
                 <!-- 頭部・胴体・脚部でそれぞれ別の反応をする透明ボタン -->
@@ -197,12 +200,15 @@
 
             <!-- 右側：コンセプト・自己紹介文エリア（サンプルテキスト） -->
             <div class="home-article">
-              <h3 class="home-article-title">コンセプト・大事にしていること（仮）</h3>
+              <h3 class="home-article-title">コンセプト</h3>
               <p>
-                ここはロボットの右側に表示されるメインの説明エリアです。サンプルテキストとして、開発者時代の論理的な視点と、現場の支援員として培った「使う人の目線」をどう掛け合わせているか、といった導入ストーリーが入ります。
+                多くの作品はありませんが、その分、なるべくモダンな手法や標準的な技術を調査して盛り込んでいます。<br>
+                このポートフォリオ自体も、vueなどで使われるコンポーネント（部品）化を意識してデザインしています。<br>
+                どんなことができるのか、よろしければご覧になられてください。
               </p>
               <p>
-                長すぎず短すぎない3〜4行程度の文章を2段落ほど置くと、左側のロボットと高さのバランスが取りやすくなります。ロボの頭・胴体・脚をクリックすると反応が変わることも、ここに一言添えておくと親切です。
+                ダンボールロボットの頭・胴体・脚にカーソルを重ねると🔍になり、クリックするとセリフが変わります。<br>
+                また、カード状の各パーツはドラッグで並べ替えることもできます。
               </p>
             </div>
           </div>
@@ -222,19 +228,19 @@
             <ul class="skill-list">
               <li>
                 <button type="button" class="skill-badge is-active" data-skill="Vue.js" data-desc="コンポーネント指向のUI設計、リアクティブな状態管理を学習中。">
-                  <img src="images/icons/vue.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/vue.svg" class="skill-icon" alt="">
                   <span>Vue.js</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Nuxt 4" data-desc="最新のディレクトリ構成やSSR/SSGの仕組み、モダンなフロントエンド開発を習得中。">
-                  <img src="images/icons/nuxt.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/nuxt.svg" class="skill-icon" alt="">
                   <span>Nuxt 4</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="ネットワーク（CCNA）" data-desc="社内SE・インフラ運用を見据え、年内取得レベルの到達を目指して基礎から学習中。">
-                  <img src="images/icons/ccna.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/ccna.svg" class="skill-icon" alt="">
                   <span>ネットワーク (CCNA)</span>
                 </button>
               </li>
@@ -247,43 +253,43 @@
             <ul class="skill-list">
               <li>
                 <button type="button" class="skill-badge" data-skill="HTML5 / CSS3" data-desc="葬儀社向けWebシステムでの画面実装経験をベースに、Grid/Flexbox・コンテナクエリ等のモダン設計に対応。">
-                  <img src="images/icons/html.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/html.svg" class="skill-icon" alt="">
                   <span>HTML / CSS</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="JavaScript (jQuery)" data-desc="Web開発や保守でDOM操作・画面実装を担当。肥大化したJSのリファクタリングでコード量を50%以下に削減。">
-                  <img src="images/icons/js.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/js.svg" class="skill-icon" alt="">
                   <span>JavaScript</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="C# (.NET / VB.NET)" data-desc="自治体関連システム（Visual C# 2015 / 3ヶ月）にて要件〜詳細設計・実装、また保守案件でVB.NETを担当。">
-                  <img src="images/icons/csharp.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/csharp.svg" class="skill-icon" alt="">
                   <span>C# / VB.NET</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Java (Spring 4)" data-desc="葬儀社向け見積システム（9ヶ月）にて基本・詳細設計〜コーディング・デバッグを担当（Tomcat環境）。">
-                  <img src="images/icons/java.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/java.svg" class="skill-icon" alt="">
                   <span>Java</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="PHP" data-desc="Webシステムのサーバーサイド改修・機能実装で使用。">
-                  <img src="images/icons/php.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/php.svg" class="skill-icon" alt="">
                   <span>PHP</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Ruby on Rails" data-desc="MVCアーキテクチャを用いたWebアプリ開発を習得（Ruby技術者認定試験 Silver 合格）。">
-                  <img src="images/icons/rails.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/rails.svg" class="skill-icon" alt="">
                   <span>Ruby on Rails</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="SQL (MySQL / SQL Server / Oracle)" data-desc="各開発・保守案件において MySQL・SQL Server・Oracle を用いたデータ設計・検索・連携を経験。">
-                  <img src="images/icons/sql.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/sql.svg" class="skill-icon" alt="">
                   <span>SQL</span>
                 </button>
               </li>
@@ -296,37 +302,37 @@
             <ul class="skill-list">
               <li>
                 <button type="button" class="skill-badge" data-skill="AI活用（業務効率化・調査）" data-desc="生成AIを活用した業務手順書の整理・トラブル調査・コード作成補助など、実務に活かせる使い方を実践。">
-                  <img src="images/icons/ai.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/ai.svg" class="skill-icon" alt="">
                   <span>AI活用</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="GAS（Google Apps Script）" data-desc="スプレッドシート等の手作業集計や定型処理をスクリプト化し、現場の工数削減・業務改善を提案。">
-                  <img src="images/icons/gas.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/gas.svg" class="skill-icon" alt="">
                   <span>GAS (業務自動化)</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Google Workspace" data-desc="小中高のICT支援（3年6ヶ月）にて端末・アカウント運用や校務デジタル化の推進を担当。">
-                  <img src="images/icons/gws.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/gws.svg" class="skill-icon" alt="">
                   <span>Google Workspace</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Microsoft 365" data-desc="教育・自治体現場での導入・運用支援、教職員向けマニュアル作成やQA対応を担当。">
-                  <img src="images/icons/m365.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/m365.svg" class="skill-icon" alt="">
                   <span>Microsoft 365</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="CentOS 7 / Windows Server" data-desc="CentOS 7 + Apache Tomcat でのWebシステム構築や、Windows Server + IBM MQ 環境の運用保守を経験。">
-                  <img src="images/icons/linux.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/linux.svg" class="skill-icon" alt="">
                   <span>CentOS 7 / Server</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="skill-badge" data-skill="Git / Subversion" data-desc="チーム開発でのバージョン管理（開発案件ではSubversion、現在はGit / VS Codeを使用）。">
-                  <img src="images/icons/git.svg" class="skill-icon" alt="" />
+                  <img src="images/icons/git.svg" class="skill-icon" alt="">
                   <span>Git / SVN</span>
                 </button>
               </li>
@@ -395,7 +401,7 @@
         </section>
 
         <!-- ▼ Works：各案件を独立したBentoカード（bento-work）として配置。追加時はこのブロックを複製 -->
-        <article id="works" class="bento-card bento-work">
+        <section id="work-1" class="bento-card bento-work">
           <div class="card-header">
             <h2>Work 01</h2>
             <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
@@ -411,9 +417,9 @@
             フレームワークに頼らず、素の HTML / CSS / JavaScript で Bento レイアウト・制御盤UI・カード並び替え・昼夜モードを実装。
           </p>
           <span class="work-tag">HTML / CSS / JS / SVG</span>
-        </article>
+        </section>
 
-        <article id="work-2" class="bento-card bento-work">
+        <section id="work-2" class="bento-card bento-work">
           <div class="card-header">
             <h2>Work 02</h2>
             <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
@@ -428,9 +434,9 @@
             小中高の現場にて GIGA端末の運用ルール策定や、手作業集計のボトルネックに対するツール・GAS活用の効率化を提案。
           </p>
           <span class="work-tag">Google Workspace / GAS / 業務改善</span>
-        </article>
+        </section>
 
-        <article id="work-3" class="bento-card bento-work">
+        <section id="work-3" class="bento-card bento-work">
           <div class="card-header">
             <h2>Work 03</h2>
             <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
@@ -445,7 +451,7 @@
             見積もり・自治体向けシステム等の設計〜実装を担当。肥大化したJavaScriptのコード量を50%以下に削減し、運用手順書も全面刷新。
           </p>
           <span class="work-tag">Java / C# / JS / SQL</span>
-        </article>
+        </section>
 
         <section id="about" class="bento-card bento-wide">
           <div class="card-header">
@@ -465,15 +471,11 @@
                 </li>
                 <li>
                   <span class="timeline-period">2018 - 2021</span>
-                  <span class="timeline-text">国東市役所 自治体DX支援・窓口業務（小規模事業者向けIT導入相談）</span>
+                  <span class="timeline-text">市役所 自治体DX支援・窓口業務（小規模事業者向けIT導入相談）</span>
                 </li>
                 <li>
                   <span class="timeline-period">2015 - 2017</span>
-                  <span class="timeline-text">株式会社BSS ソフトウェア開発（C# / Java / PHP による業務・Web開発）</span>
-                </li>
-                <li>
-                  <span class="timeline-period">2003 - 2010</span>
-                  <span class="timeline-text">株式会社エーブック 店舗業務（接客・在庫管理・新人教育）</span>
+                  <span class="timeline-text">ソフトウェア開発（C# / Java / JavaScript による業務・Web開発）</span>
                 </li>
               </ul>
             </div>
@@ -482,8 +484,8 @@
             <div class="about-block">
               <h3 class="about-subtitle">Certifications &amp; Score（資格・評価）</h3>
               <ul class="cert-list">
-                <li>Paiza スキルチェック ランクA（Rating 1635）</li>
                 <li>基本情報技術者試験 合格（2015年）</li>
+                <li>Paiza スキルチェック RankA（2017年時点）</li>
                 <li>Ruby技術者認定試験 Silver 合格（2017年）</li>
                 <li>第二種電気工事士（2013年）／ 普通自動車免許（2009年）</li>
               </ul>
@@ -495,7 +497,7 @@
 
     <!-- フッター -->
     <footer class="site-footer">
-      <p>&copy; 2026 Portfolio Project</p>
+      <p>&copy; 2026 teppee / BoxBot.Folio</p>
     </footer>
 
   </div>
