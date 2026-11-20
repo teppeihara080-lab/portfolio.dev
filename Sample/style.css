@@ -143,7 +143,14 @@ body {
   gap: 16px;
 }
 
+.site-title {
+  margin: 0;            /* ブラウザ勝手につける上下の余白を消す */
+  font-size: 1rem;      /* ★これが重要：h1の初期巨大サイズを打ち消す */
+  line-height: 1;       /* 余計な上下の隙間をなくす */
+}
+
 .site-logo {
+  display: inline-block; /* 箱の大きさを親（h1）とピタッと一致させる */
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -588,7 +595,7 @@ body {
   border: none;
   background-color: transparent;
   /* リンクの指マークではなく「調査・観察する」虫眼鏡カーソルにする */
-  cursor: zoom-in;
+  cursor: url("images/icons/magnifying-glass.svg"), auto;
 }
 .hitbox-head { top: 0%;  height: 47%; }
 .hitbox-body { top: 47%; height: 33%; }
