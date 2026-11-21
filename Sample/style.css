@@ -189,6 +189,12 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
+/* Day / Night の文字数差でボタン幅が変わり、左隣のナビが左右にズレるのを防ぐ */
+.theme-toggle {
+  min-width: 84px;
+  justify-content: center;
+}
+
 .reset-order-btn[hidden] {
   display: none;
 }
