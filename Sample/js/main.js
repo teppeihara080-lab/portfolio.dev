@@ -30,13 +30,6 @@ function initThemeToggle() {
       themeMeta.setAttribute('content', isDark ? '#0f172a' : '#f4f5f7');
     }
 
-    if (toggleBtn) {
-      // スクリーンリーダー（音声読み上げ）向けに現在の状態を伝える属性を更新
-      toggleBtn.setAttribute(
-        'aria-label',
-        isDark ? '昼モード（ライト）に切り替え' : '夜モード（ダーク）に切り替え'
-      );
-    }
     if (toggleLabel) {
       toggleLabel.textContent = isDark ? 'Night' : 'Day';
     }
@@ -169,47 +162,96 @@ function initScrollSpy() {
 
 
 /* ==========================================================================
-   4. ドラッグ操作によるBentoカードの並び替え機能（PC・スマホ両対応）
+   4. ドラッグ操作によるBentoカードの並び替え機能（PC限定 & リセット機能付き）
    --------------------------------------------------------------------------
-   - スマホ / タッチ操作：.drag-handle（6点ドット）を掴んだ時だけ反応
-   - PC / マウス操作　　：カード内のボタン・リンク以外のどこからでも移動可能
-   - 誤操作防止の閾値　：8px 以上動かした時だけドラッグ開始とみなす
+   - PC（768px以上・マウス操作）限定：スマホの誤作動や狭い画面での窮屈さを防ぐ
+   - 誤操作防止の閾値：8px 以上動かした時だけドラッグ開始とみなす
+   - 離した瞬間に入れ替え：ドラッグ中はドロップ先の枠だけ光らせ、離した瞬間に1回だけ
+     入れ替えることで、途中でレイアウトが崩れてカードが宙に浮くバグを防ぐ
    ========================================================================== */
 function initBentoDragAndDrop() {
   const grid = document.getElementById('bento-grid');
   if (!grid) return;
 
   const ORDER_STORAGE_KEY = 'portfolio-bento-order';
+  const HIDDEN_STORAGE_KEY = 'portfolio-bento-hidden';
   const DRAG_THRESHOLD = 8; // ドラッグ開始とみなす最小移動距離（px）
+  const resetBtn = document.getElementById('reset-order-btn');
 
-  // 前回保存したカードの並び順があれば復元する
+  // ページ読み込み時点（HTMLどおり）の初期順を控えておく（リセットボタン用）
+  const initialOrder = getGridOrder(grid);
+
+  // 前回保存したカードの並び順・非表示状態があれば復元する
   restoreCardOrder(grid, ORDER_STORAGE_KEY);
+  restoreHiddenCards(grid, HIDDEN_STORAGE_KEY);
 
-  // ドラッグ候補の情報と、実際にドラッグ中かどうかの状態を管理する変数
+  // 並び順が変わっている、または非表示カードが1つでもある時だけ「配置リセット」ボタンを表示
+  const updateResetButton = () => {
+    if (!resetBtn) return;
+    const currentOrder = getGridOrder(grid);
+    const isOrderModified = currentOrder.some((id, index) => id !== initialOrder[index]);
+    const hasHiddenCards = grid.querySelector('.bento-card.is-hidden') !== null;
+    resetBtn.hidden = !(isOrderModified || hasHiddenCards);
+  };
+  updateResetButton();
+
+  // リセットボタンが押されたら、並び順も非表示状態もすべて初期状態に戻す
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      localStorage.removeItem(ORDER_STORAGE_KEY);
+      localStorage.removeItem(HIDDEN_STORAGE_KEY);
+
+      initialOrder.forEach((id) => {
+        const card = grid.querySelector(`.bento-card[id="${id}"]`);
+        if (card) {
+          card.classList.remove('is-hidden');
+          grid.appendChild(card);
+        }
+      });
+      updateResetButton();
+    });
+  }
+
+  // 各カードの「×（非表示）」ボタンが押されたらカードを隠す（CSS Gridが自動で隙間を詰める）
+  grid.addEventListener('click', (e) => {
+    const hideBtn = e.target.closest('.hide-card-btn');
+    if (!hideBtn) return;
+
+    const card = hideBtn.closest('.bento-card');
+    if (!card || card.parentNode !== grid) return;
+
+    card.classList.add('is-hidden');
+    saveHiddenCards(grid, HIDDEN_STORAGE_KEY);
+    updateResetButton();
+  });
+
   let dragState = null;
   let isDragging = false;
+  let dropTarget = null;
+
+  // ドロップ先ハイライトを解除するヘルパー関数
+  const clearDropTarget = () => {
+    if (dropTarget) {
+      dropTarget.classList.remove('is-drop-target');
+      dropTarget = null;
+    }
+  };
 
   // 1. 押し始めた時（まだドラッグ開始はしない）
   grid.addEventListener('pointerdown', (e) => {
-    // マウスの場合は左クリック（button === 0）のみ反応させる
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    // PC画面幅（768px以上）かつマウス等の左クリックのみ許可（スマホ・タッチは無効）
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    if (!isDesktop || e.pointerType === 'touch' || e.button !== 0) return;
 
+    // ハンドル部分（.drag-handle）を掴んだ時だけ反応させる（本文のテキスト選択と干渉させないため）
     const handle = e.target.closest('.drag-handle');
-    const isMobileOrTouch =
-      e.pointerType === 'touch' || window.matchMedia('(max-width: 767px)').matches;
+    if (!handle) return;
 
-    // スマホ画面やタッチ操作では、ハンドル部分以外を触った時は通常スクロールさせる
-    if (isMobileOrTouch && !handle) return;
-
-    const card = (handle || e.target).closest('.bento-card');
+    const card = handle.closest('.bento-card');
     if (!card || card.parentNode !== grid) return;
-
-    // PCでカード本体を掴む場合でも、他のボタンやリンクのクリックは邪魔しない
-    if (!handle && e.target.closest('button, a, input, select, textarea')) return;
 
     dragState = {
       card,
-      captureTarget: handle || card,
       pointerId: e.pointerId,
       startX: e.clientX,
       startY: e.clientY,
@@ -217,66 +259,75 @@ function initBentoDragAndDrop() {
     isDragging = false;
   });
 
-  // 2. 指やマウスを動かした時
-  grid.addEventListener('pointermove', (e) => {
+  // 2. マウスを動かした時（windowで監視することで画面外に出ても追跡が途切れない）
+  window.addEventListener('pointermove', (e) => {
     if (!dragState || e.pointerId !== dragState.pointerId) return;
 
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
 
-    // 移動距離が閾値（8px）未満なら「ただのタップや手ブレ」とみなして何もしない
+    // 移動距離が閾値（8px）未満なら「ただのクリックや手ブレ」とみなして何もしない
     if (!isDragging) {
       if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
-
       isDragging = true;
       dragState.card.classList.add('is-dragging');
-
-      // 指やマウスがカードの外に出ても、離すまで追跡し続ける設定
-      try {
-        dragState.captureTarget.setPointerCapture(e.pointerId);
-      } catch {
-        // 非対応環境などで失敗してもそのまま続行する
-      }
+      document.body.classList.add('is-card-dragging');
     }
 
     // 移動量に合わせてカードを視覚的に動かす
-    const { card } = dragState;
-    card.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+    dragState.card.style.transform = `translate(${dx}px, ${dy}px) scale(1.01)`;
 
-    // ポインターの「真下」にある別のカードを探す（.is-dragging は CSS で pointer-events: none なので透過する）
+    // マウスの「真下」にある別のカードを探し、ドロップ先の点線枠を付ける
     const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
-    const targetCard = elementBelow?.closest('.bento-card');
+    const nextTarget = elementBelow?.closest('.bento-card');
+    const validTarget =
+      nextTarget && nextTarget !== dragState.card && nextTarget.parentNode === grid
+        ? nextTarget
+        : null;
 
-    // 別のカードの上に乗ったら、HTMLの並び順を入れ替える
-    if (targetCard && targetCard !== card && targetCard.parentNode === grid) {
-      swapCardsKeepingPosition(grid, card, targetCard, dragState, e.clientX, e.clientY);
+    if (validTarget !== dropTarget) {
+      clearDropTarget();
+      if (validTarget) {
+        dropTarget = validTarget;
+        dropTarget.classList.add('is-drop-target');
+      }
     }
   });
 
-  // 3. 指やマウスを離した時（または中断された時）
+  // 3. マウスを離した時・中断された時（windowで監視し、確実に後片付けする）
   const endDrag = (e) => {
-    if (!dragState || e.pointerId !== dragState.pointerId) return;
+    if (!dragState) return;
+    if (e && e.pointerId !== undefined && e.pointerId !== dragState.pointerId) return;
 
-    if (isDragging) {
-      dragState.card.classList.remove('is-dragging');
-      dragState.card.style.transform = '';
-      saveCardOrder(grid, ORDER_STORAGE_KEY);
-    }
+    const { card } = dragState;
+    const target = dropTarget;
+    const wasDragging = isDragging;
 
+    // 状態と見た目を必ず元に戻す（宙浮き・操作不能バグの完全防止）
+    card.classList.remove('is-dragging');
+    card.style.transform = '';
+    document.body.classList.remove('is-card-dragging');
+    clearDropTarget();
     dragState = null;
     isDragging = false;
+
+    // 別のカードの上で離した時だけ、1回だけHTMLの並び順を入れ替える
+    if (wasDragging && target) {
+      swapCardOrder(grid, card, target);
+      saveCardOrder(grid, ORDER_STORAGE_KEY);
+      updateResetButton();
+    }
   };
 
-  grid.addEventListener('pointerup', endDrag);
-  grid.addEventListener('pointercancel', endDrag);
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+  window.addEventListener('blur', () => endDrag());
 }
 
 /**
- * カードのDOM順を入れ替えつつ、レイアウト変化による座標ズレを補正して指に吸い付かせる
+ * ドラッグしたカードをターゲット位置へ移動する
  */
-function swapCardsKeepingPosition(grid, draggedCard, targetCard, dragState, clientX, clientY) {
-  const prevRect = draggedCard.getBoundingClientRect();
-
+function swapCardOrder(grid, draggedCard, targetCard) {
   const cards = Array.from(grid.children);
   const draggedIndex = cards.indexOf(draggedCard);
   const targetIndex = cards.indexOf(targetCard);
@@ -286,25 +337,22 @@ function swapCardsKeepingPosition(grid, draggedCard, targetCard, dragState, clie
   } else {
     grid.insertBefore(draggedCard, targetCard);
   }
+}
 
-  // 入れ替え前後の位置の差を計算して startX / startY を補正する
-  const nextRect = draggedCard.getBoundingClientRect();
-  dragState.startX += nextRect.left - prevRect.left;
-  dragState.startY += nextRect.top - prevRect.top;
-
-  const newDx = clientX - dragState.startX;
-  const newDy = clientY - dragState.startY;
-  draggedCard.style.transform = `translate(${newDx}px, ${newDy}px) scale(1.02)`;
+/**
+ * 現在のグリッド内のカードID配列を取得する
+ */
+function getGridOrder(grid) {
+  return Array.from(grid.children)
+    .map((el) => el.id)
+    .filter(Boolean);
 }
 
 /**
  * 現在のカードの並び順（idの配列）を localStorage に保存する
  */
 function saveCardOrder(grid, storageKey) {
-  const order = Array.from(grid.children)
-    .map((el) => el.id)
-    .filter(Boolean);
-  localStorage.setItem(storageKey, JSON.stringify(order));
+  localStorage.setItem(storageKey, JSON.stringify(getGridOrder(grid)));
 }
 
 /**
@@ -316,9 +364,7 @@ function restoreCardOrder(grid, storageKey) {
     const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
     if (!Array.isArray(saved)) return;
 
-    const currentIds = Array.from(grid.children)
-      .map((el) => el.id)
-      .filter(Boolean);
+    const currentIds = getGridOrder(grid);
 
     // 保存データと現在のカード構成（個数・ID）が完全一致しない場合はリセット
     const isSameStructure =
@@ -335,6 +381,33 @@ function restoreCardOrder(grid, storageKey) {
     });
   } catch {
     // 保存データが壊れていた場合は初期順のまま表示する
+  }
+}
+
+/**
+ * 非表示にしたカードのID一覧を localStorage に保存する
+ */
+function saveHiddenCards(grid, storageKey) {
+  const hiddenIds = Array.from(grid.querySelectorAll('.bento-card.is-hidden'))
+    .map((el) => el.id)
+    .filter(Boolean);
+  localStorage.setItem(storageKey, JSON.stringify(hiddenIds));
+}
+
+/**
+ * localStorage に保存された非表示状態を復元する
+ */
+function restoreHiddenCards(grid, storageKey) {
+  try {
+    const hiddenIds = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    if (!Array.isArray(hiddenIds)) return;
+
+    hiddenIds.forEach((id) => {
+      const card = grid.querySelector(`.bento-card[id="${id}"]`);
+      if (card) card.classList.add('is-hidden');
+    });
+  } catch {
+    // 保存データが壊れていた場合は無視する
   }
 }
 

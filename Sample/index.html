@@ -1,505 +1,969 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <!-- 1. 最優先の基本設定 -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <!-- ↑はviewport-fitの挙動、端末のセーフエリア等についてよくわかってないかもしれないので、暫定 -->
-  <title>BoxBot.Folio</title>
+  <head>
+    <!-- 1. 最優先の基本設定 -->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <!-- ↑はviewport-fitの挙動、端末のセーフエリア等についてよくわかってないかもしれないので、暫定 -->
+    <title>BoxBot.Folio</title>
 
-  <!-- 2. 外部接続の事前準備 ＆ JSの先行ダウンロード（defer） -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <script src="js/dialogues.js" defer></script><!-- セリフデータ。ESmodule予定 -->
-  <script src="js/main.js" defer></script>
+    <!-- 2. 外部接続の事前準備 ＆ JSの先行ダウンロード（defer） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="js/dialogues.js" defer></script>
+    <!-- セリフデータ。ESmodule予定 -->
+    <script src="js/main.js" defer></script>
 
-  <!-- 3. スタイルシート（外部フォント → 自分のCSSの順） -->
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <!-- 3. スタイルシート（外部フォント → 自分のCSSの順） -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- 4. ページ情報・ブラウザ制御 -->
-  <meta name="description" content="エンジニアの道を一度挫折したひとのポートフォリオです。現状で何ができるかを見ていただければ。">
-  <meta name="theme-color" content="#f4f5f7">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="format-detection" content="telephone=no">
-  
+    <!-- 4. ページ情報・ブラウザ制御 -->
+    <meta
+      name="description"
+      content="エンジニアの道を一度挫折したひとのポートフォリオです。現状で何ができるかを見ていただければ。"
+    />
+    <meta name="theme-color" content="#f4f5f7" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="format-detection" content="telephone=no" />
 
-  <!-- 5. ファビコン（絵文字でもよかったけど演習のためセットを配置。マニフェストはローカル直開きでCORSエラーが出るためコメントアウト） -->
-  <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🤖</text></svg>"> -->
-  <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
-  <!-- <link rel="manifest" href="images/favicon/site.webmanifest"> -->
+    <!-- 5. ファビコン（絵文字でもよかったけど演習のためセットを配置。マニフェストはローカル直開きでCORSエラーが出るためコメントアウト） -->
+    <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🤖</text></svg>"> -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon/favicon-16x16.png"
+    />
+    <!-- <link rel="manifest" href="images/favicon/site.webmanifest"> -->
 
-  <!-- 6. OGP設定（Vercel公開時にURLを確定させて有効化） -->
-  <!--
+    <!-- 6. OGP設定（Vercel公開時にURLを確定させて有効化） -->
+    <!--
   <meta property="og:title" content="Portfolio - Bento & Control Panel UI">
   <meta property="og:description" content="エンジニアの道を一度挫折したひとのポートフォリオです。現状で何ができるかを見ていただければ。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://たぶんVercelでホスティング/">
   <meta property="og:image" content="https://たぶんVercelでホスティング/images/ogp.png">
   <meta name="twitter:card" content="summary_large_image">
-  -->
-</head>
-<body>
+  --></head>
+  <body>
+    <!-- ▼ SVG共通部品の定義（画面には直接表示されない） -->
+    <svg style="display: none">
+      <!-- 銘板（白いラベルプレート） -->
+      <symbol id="icon-plate" viewBox="0 0 120 36" preserveAspectRatio="none">
+        <rect
+          x="1"
+          y="1"
+          width="118"
+          height="34"
+          fill="#ffffff"
+          stroke="#555555"
+          stroke-width="1.5"
+        />
+        <circle cx="6" cy="6" r="1.5" fill="#888888" />
+        <circle cx="114" cy="6" r="1.5" fill="#888888" />
+        <circle cx="6" cy="30" r="1.5" fill="#888888" />
+        <circle cx="114" cy="30" r="1.5" fill="#888888" />
+      </symbol>
 
-  <!-- ▼ SVG共通部品の定義（画面には直接表示されない） -->
-  <svg style="display: none;" aria-hidden="true">
-    <!-- 銘板（白いラベルプレート） -->
-    <symbol id="icon-plate" viewBox="0 0 120 36" preserveAspectRatio="none">
-      <rect x="1" y="1" width="118" height="34" fill="#ffffff" stroke="#555555" stroke-width="1.5" />
-      <circle cx="6" cy="6" r="1.5" fill="#888888" />
-      <circle cx="114" cy="6" r="1.5" fill="#888888" />
-      <circle cx="6" cy="30" r="1.5" fill="#888888" />
-      <circle cx="114" cy="30" r="1.5" fill="#888888" />
-    </symbol>
+      <!-- 押しボタンの黒い外枠（ベゼル） -->
+      <symbol id="icon-button-bezel" viewBox="0 0 64 64">
+        <circle
+          cx="32"
+          cy="32"
+          r="28"
+          fill="#1a1a1a"
+          stroke="#000000"
+          stroke-width="2"
+        />
+        <circle cx="32" cy="32" r="24" fill="#333333" />
+      </symbol>
 
-    <!-- 押しボタンの黒い外枠（ベゼル） -->
-    <symbol id="icon-button-bezel" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="28" fill="#1a1a1a" stroke="#000000" stroke-width="2" />
-      <circle cx="32" cy="32" r="24" fill="#333333" />
-    </symbol>
+      <!-- ドラッグハンドル（6点ドット） -->
+      <symbol id="icon-drag-handle" viewBox="0 0 16 16">
+        <circle cx="5.5" cy="3.5" r="1.2" />
+        <circle cx="10.5" cy="3.5" r="1.2" />
+        <circle cx="5.5" cy="8" r="1.2" />
+        <circle cx="10.5" cy="8" r="1.2" />
+        <circle cx="5.5" cy="12.5" r="1.2" />
+        <circle cx="10.5" cy="12.5" r="1.2" />
+      </symbol>
 
-    <!-- ドラッグハンドル（6点ドット） -->
-    <symbol id="icon-drag-handle" viewBox="0 0 16 16">
-      <circle cx="5.5" cy="3.5" r="1.2" />
-      <circle cx="10.5" cy="3.5" r="1.2" />
-      <circle cx="5.5" cy="8" r="1.2" />
-      <circle cx="10.5" cy="8" r="1.2" />
-      <circle cx="5.5" cy="12.5" r="1.2" />
-      <circle cx="10.5" cy="12.5" r="1.2" />
-    </symbol>
+      <!-- 昼モード（太陽）アイコン -->
+      <symbol
+        id="icon-sun"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+        />
+      </symbol>
 
-    <!-- 昼モード（太陽）アイコン -->
-    <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-    </symbol>
+      <!-- 夜モード（月）アイコン -->
+      <symbol
+        id="icon-moon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </symbol>
 
-    <!-- 夜モード（月）アイコン -->
-    <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </symbol>
-  </svg>
+      <!-- 配置リセット（反時計回り矢印）アイコン -->
+      <symbol
+        id="icon-reset"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+        <path d="M3 3v5h5" />
+      </symbol>
 
-  <!-- ▼ ページ全体の外側Gridコンテナ -->
-  <div class="layout-container">
+      <!-- カード非表示（×）アイコン -->
+      <symbol
+        id="icon-close"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+      >
+        <path d="M4 4l8 8M12 4l-8 8" />
+      </symbol>
+    </svg>
 
-    <!-- ヘッダー（PCでは上部バー、スマホではロゴのみ上部・ナビは下部固定） -->
-    <header class="site-header">
-      <div class="header-inner">
-        <h1 class="site-title">
-          <a href="#home" class="site-logo">BoxBot<span>.Folio</span></a>
-        </h1>
-        <!-- グローバルナビゲーション（スマホ：制御盤 / PC：モダンナビ） -->
-        <nav class="global-nav" aria-label="グローバルナビゲーション">
-          <ul class="nav-list">
+    <!-- ▼ ページ全体の外側Gridコンテナ -->
+    <div class="layout-container">
+      <!-- ヘッダー（PCでは上部バー、スマホではロゴのみ上部・ナビは下部固定） -->
+      <header class="site-header">
+        <div class="header-inner">
+          <h1 class="site-title">
+            <a href="#home" class="site-logo">BoxBot<span>.Folio</span></a>
+          </h1>
+          <!-- グローバルナビゲーション（スマホ：制御盤 / PC：モダンナビ） -->
+          <nav class="global-nav">
+            <ul class="nav-list">
+              <li class="nav-item" data-color="green">
+                <a href="#home" class="nav-link">
+                  <div class="nameplate">
+                    <svg class="plate-bg"><use href="#icon-plate" /></svg>
+                    <span class="nav-label">Home</span>
+                  </div>
+                  <div class="push-button-wrap">
+                    <svg class="button-bezel">
+                      <use href="#icon-button-bezel" />
+                    </svg>
+                    <span class="button-cap"></span>
+                  </div>
+                </a>
+              </li>
 
-            <li class="nav-item" data-color="green">
-              <a href="#home" class="nav-link">
-                <div class="nameplate">
-                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
-                  <span class="nav-label">Home</span>
-                </div>
-                <div class="push-button-wrap" aria-hidden="true">
-                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
-                  <span class="button-cap"></span>
-                </div>
-              </a>
-            </li>
+              <li class="nav-item" data-color="blue">
+                <a href="#skills" class="nav-link">
+                  <div class="nameplate">
+                    <svg class="plate-bg"><use href="#icon-plate" /></svg>
+                    <span class="nav-label">Skills</span>
+                  </div>
+                  <div class="push-button-wrap">
+                    <svg class="button-bezel">
+                      <use href="#icon-button-bezel" />
+                    </svg>
+                    <span class="button-cap"></span>
+                  </div>
+                </a>
+              </li>
 
-            <li class="nav-item" data-color="blue">
-              <a href="#skills" class="nav-link">
-                <div class="nameplate">
-                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
-                  <span class="nav-label">Skills</span>
-                </div>
-                <div class="push-button-wrap" aria-hidden="true">
-                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
-                  <span class="button-cap"></span>
-                </div>
-              </a>
-            </li>
+              <li class="nav-item" data-color="yellow">
+                <a href="#work-1" class="nav-link">
+                  <div class="nameplate">
+                    <svg class="plate-bg"><use href="#icon-plate" /></svg>
+                    <span class="nav-label">Works</span>
+                  </div>
+                  <div class="push-button-wrap">
+                    <svg class="button-bezel">
+                      <use href="#icon-button-bezel" />
+                    </svg>
+                    <span class="button-cap"></span>
+                  </div>
+                </a>
+              </li>
 
-            <li class="nav-item" data-color="yellow">
-              <a href="#works" class="nav-link">
-                <div class="nameplate">
-                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
-                  <span class="nav-label">Works</span>
-                </div>
-                <div class="push-button-wrap" aria-hidden="true">
-                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
-                  <span class="button-cap"></span>
-                </div>
-              </a>
-            </li>
+              <li class="nav-item" data-color="red">
+                <a href="#about" class="nav-link">
+                  <div class="nameplate">
+                    <svg class="plate-bg"><use href="#icon-plate" /></svg>
+                    <span class="nav-label">About</span>
+                  </div>
+                  <div class="push-button-wrap">
+                    <svg class="button-bezel">
+                      <use href="#icon-button-bezel" />
+                    </svg>
+                    <span class="button-cap"></span>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-            <li class="nav-item" data-color="red">
-              <a href="#about" class="nav-link">
-                <div class="nameplate">
-                  <svg class="plate-bg" aria-hidden="true"><use href="#icon-plate" /></svg>
-                  <span class="nav-label">About</span>
-                </div>
-                <div class="push-button-wrap" aria-hidden="true">
-                  <svg class="button-bezel"><use href="#icon-button-bezel" /></svg>
-                  <span class="button-cap"></span>
-                </div>
-              </a>
-            </li>
+          <!-- ヘッダー右側の操作ボタン群（配置リセット ＋ 昼夜モード） -->
+          <div class="header-actions">
+            <button
+              type="button"
+              id="reset-order-btn"
+              class="reset-order-btn"
+              title="カードの並び順を初期状態に戻す"
+              hidden
+            >
+              <svg width="16" height="16"><use href="#icon-reset" /></svg>
+              <span>配置リセット</span>
+            </button>
 
-          </ul>
-        </nav>
-
-        <!-- 昼夜モード切り替えスイッチ -->
-        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="夜モードに切り替え" title="昼・夜モード切り替え">
-          <svg class="theme-icon theme-icon-sun" width="18" height="18" aria-hidden="true"><use href="#icon-sun" /></svg>
-          <svg class="theme-icon theme-icon-moon" width="18" height="18" aria-hidden="true"><use href="#icon-moon" /></svg>
-          <span class="theme-toggle-label">Day</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- メインコンテンツ -->
-    <main class="site-main">
-      <!-- ▼ 内側のGridコンテナ（Bento Boxレイアウト） -->
-      <div id="bento-grid" class="bento-grid">
-        <section id="home" class="bento-card bento-large">
-          <div class="card-header">
-            <h2>Home / Concept</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
+            <button
+              type="button"
+              id="theme-toggle"
+              class="theme-toggle"
+              title="昼・夜モード切り替え"
+            >
+              <svg class="theme-icon theme-icon-sun" width="18" height="18">
+                <use href="#icon-sun" />
+              </svg>
+              <svg class="theme-icon theme-icon-moon" width="18" height="18">
+                <use href="#icon-moon" />
+              </svg>
+              <span class="theme-toggle-label">Day</span>
             </button>
           </div>
-          <p class="home-lead">
-            開発経験 × 自治体・教育現場でのICT支援。<br>
-            「仕組みを考える」論理的思考と「使う・支える」現場感覚を持つteppeeの、エンジニア再挑戦中ポートフォリオです。
-          </p>
+        </div>
+      </header>
 
-          <!-- ▼ Home下部：Flexboxで「左：ロボット」「右：紹介文」を並べる -->
-          <div class="home-body">
-            <!-- 左側：ダンボールロボット（クリック部位ごとにセリフと表情が変化） -->
+      <!-- メインコンテンツ -->
+      <main class="site-main">
+        <!-- ▼ 内側のGridコンテナ（Bento Boxレイアウト） -->
+        <div id="bento-grid" class="bento-grid">
+          <section id="home" class="bento-card bento-large">
+            <div class="card-header">
+              <h2>Home / Concept</h2>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+            <p class="home-lead">
+              開発経験 × 自治体・教育現場でのICT支援。<br />
+              「仕組みを考える」論理的思考と「使う・支える」現場感覚を持つteppeeの、エンジニア再挑戦中ポートフォリオです。
+            </p>
+
+            <!-- コンセプト・自己紹介文エリア -->
+            <div class="home-article">
+              <h3 class="home-article-title">コンセプト</h3>
+              <p>
+                業務システムは「作ること、動くこと」だけではなく、現場の人にとっての「使いやすさ」が大切だと考えています。部署や立場によって必要な情報は異なるため、各機能をカード（部品）として独立させ、使う人が見やすい順番へ並べ替えたり、不要なものを隠したりできる設計にしました。
+              </p>
+              <p>
+                「自分の手でカスタマイズできる」というコントロール感が、システムへの抵抗感、小さなストレスを減らし、業務に馴染むきっかけになる――そんな風にユーザーの余白を生み、能力を本来の職務に活かしていただけるようなシステムを考えるモデルケースとして作っています。
+              </p>
+            </div>
+
+            <!-- 3つの柱（視覚的サマリー） -->
+            <ul class="home-pillars">
+              <li class="pillar-item">
+                <img src="images/icons/pillar-logic.svg" class="pillar-icon" alt="" />
+                <div>
+                  <strong class="pillar-title">仕組み × 設計力</strong>
+                  <span class="pillar-desc">開発3年・論理的アプローチ</span>
+                </div>
+              </li>
+              <li class="pillar-item">
+                <img src="images/icons/pillar-ux.svg" class="pillar-icon" alt="" />
+                <div>
+                  <strong class="pillar-title">現場志向 × 定着</strong>
+                  <span class="pillar-desc">ICT支援6年の使う人目線</span>
+                </div>
+              </li>
+              <li class="pillar-item">
+                <img src="images/icons/pillar-custom.svg" class="pillar-icon" alt="" />
+                <div>
+                  <strong class="pillar-title">機能 × カスタマイズ</strong>
+                  <span class="pillar-desc">迷わず使えるUIの提案</span>
+                </div>
+              </li>
+            </ul>
+
+            <!-- このページで試せるギミック（アイコン付き操作チップ） -->
+            <div class="home-hints">
+              <span class="hint-label">Try:</span>
+              <span class="hint-chip">
+                <svg width="13" height="13" fill="currentColor"><use href="#icon-drag-handle" /></svg>
+                <span>並び替え (PC)</span>
+              </span>
+              <span class="hint-chip">
+                <svg width="13" height="13"><use href="#icon-close" /></svg>
+                <span>カード非表示</span>
+              </span>
+              <span class="hint-chip">
+                <svg width="13" height="13"><use href="#icon-sun" /></svg>
+                <span>昼夜モード</span>
+              </span>
+              <span class="hint-chip">
+                <span>🤖 BoxBot（部位別反応）</span>
+              </span>
+            </div>
+          </section>
+
+          <!-- ▼ Status & Links：福岡の現在天気（Open-Meteo API）＋ 外部リンク・連絡先ダミー枠 -->
+          <aside id="weather" class="bento-card bento-weather">
+            <div class="card-header">
+              <h2>Status &amp; Links</h2>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3つの小セクションを同じ階層・見出しデザインで均等に並べる -->
+            <div class="side-sections">
+              <!-- 上段：現在の天気（福岡） -->
+              <div class="side-section">
+                <div class="side-section-head">
+                  <h3 class="side-section-title">Weather (Fukuoka)</h3>
+                  <a
+                    class="weather-credit-link"
+                    href="https://open-meteo.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open-Meteo
+                  </a>
+                </div>
+                <div class="weather-box">
+                  <div id="weather-body" class="weather-body">
+                    <p class="weather-status">天気情報を取得中...</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 中段：現在のステータス（採用担当者向けサマリー） -->
+              <div class="side-section">
+                <h3 class="side-section-title">Current Status</h3>
+                <div class="status-box">
+                  <ul class="status-list">
+                    <li>
+                      <span class="status-dot"></span>
+                      <span><strong>就職活動中</strong>（社内SE / Web系）</span>
+                    </li>
+                    <li>
+                      <span class="status-key">拠点</span>
+                      <span class="status-val">福岡県（全国転居可）</span>
+                    </li>
+                    <li>
+                      <span class="status-key">目標</span>
+                      <span class="status-val"
+                        >CCNA 年内取得を目指して学習中</span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- 下段：外部リンク・コンタクト先（公開時に href="#" を実際のURLへ差し替え） -->
+              <div class="side-section">
+                <h3 class="side-section-title">
+                  Links &amp; Contact（準備中）
+                </h3>
+                <ul class="social-links">
+                  <li>
+                    <a href="#" class="social-link">
+                      <span class="social-name">GitHub</span>
+                      <span class="social-note">Code</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="social-link">
+                      <span class="social-name">Zenn / Qiita</span>
+                      <span class="social-note">Articles</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="social-link">
+                      <span class="social-name">X / SNS</span>
+                      <span class="social-note">Log</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="social-link">
+                      <span class="social-name">Contact</span>
+                      <span class="social-note">Mail</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+
+          <!-- ▼ BoxBot：ダンボールロボットを独立カードとして切り出し（不要なら×で非表示可能） -->
+          <aside id="robot" class="bento-card bento-robot">
+            <div class="card-header">
+              <h2>BoxBot</h2>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- ダンボールロボット（クリック部位ごとにセリフと表情が変化） -->
             <div class="robot-area">
               <!-- 吹き出しの固定枠（セリフの長さでロボット本体の位置が上下にガタつかないようにする） -->
               <div class="speech-bubble-slot">
-                <div class="speech-bubble" aria-live="polite">
-                  <p id="robot-message">拝啓　貴社におかれましては、ますますご清栄のこととお慶び申し上げます。</p>
+                <div class="speech-bubble">
+                  <p id="robot-message">
+                    拝啓　貴社におかれましては、ますますご清栄のこととお慶び申し上げます。
+                  </p>
                 </div>
               </div>
 
               <!-- ロボット本体（スプライト画像）＋ 透明な当たり判定（3分割） -->
               <div class="robot-wrapper">
-                <!-- aria-live="polite"：クリックでセリフが切り替わった際、現在の読み上げが終わってから新しい文章を音声案内させる -->
-                <div id="robot-sprite" class="robot-sprite face-normal" role="img" aria-label="案内ロボット"></div>
+                <div id="robot-sprite" class="robot-sprite face-normal"></div>
 
                 <!-- 頭部・胴体・脚部でそれぞれ別の反応をする透明ボタン -->
-                <button type="button" class="hitbox hitbox-head" data-part="head" aria-label="ロボットに質問する：調子はどう？" title="調子はどう？"></button>
-                <button type="button" class="hitbox hitbox-body" data-part="body" aria-label="ロボットに質問する：実務でできることは？" title="実務でできることは？"></button>
-                <button type="button" class="hitbox hitbox-legs" data-part="legs" aria-label="ロボットに質問する：これまでの経歴は？" title="これまでの経歴は？"></button>
+                <button
+                  type="button"
+                  class="hitbox hitbox-head"
+                  data-part="head"
+                  title="調子はどう？"
+                ></button>
+                <button
+                  type="button"
+                  class="hitbox hitbox-body"
+                  data-part="body"
+                  title="実務でできることは？"
+                ></button>
+                <button
+                  type="button"
+                  class="hitbox hitbox-legs"
+                  data-part="legs"
+                  title="これまでの経歴は？"
+                ></button>
+              </div>
+            </div>
+          </aside>
+
+          <section id="skills" class="bento-card bento-skills">
+            <div class="card-header">
+              <h2>Skills</h2>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
               </div>
             </div>
 
-            <!-- 右側：コンセプト・自己紹介文エリア（サンプルテキスト） -->
-            <div class="home-article">
-              <h3 class="home-article-title">コンセプト</h3>
-              <p>
-                多くの作品はありませんが、その分、なるべくモダンな手法や標準的な技術を調査して盛り込んでいます。<br>
-                このポートフォリオ自体も、vueなどで使われるコンポーネント（部品）化を意識してデザインしています。<br>
-                どんなことができるのか、よろしければご覧になられてください。
-              </p>
-              <p>
-                ダンボールロボットの頭・胴体・脚にカーソルを重ねると🔍になり、クリックするとセリフが変わります。<br>
-                また、カード状の各パーツはドラッグで並べ替えることもできます。
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section id="skills" class="bento-card bento-skills">
-          <div class="card-header">
-            <h2>Skills</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-
-          <!-- カテゴリ1：現在学習中 -->
-          <div class="skill-group">
-            <h3 class="skill-group-title">Currently Learning（学習中）</h3>
-            <ul class="skill-list">
-              <li>
-                <button type="button" class="skill-badge is-active" data-skill="Vue.js" data-desc="コンポーネント指向のUI設計、リアクティブな状態管理を学習中。">
-                  <img src="images/icons/vue.svg" class="skill-icon" alt="">
-                  <span>Vue.js</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Nuxt 4" data-desc="最新のディレクトリ構成やSSR/SSGの仕組み、モダンなフロントエンド開発を習得中。">
-                  <img src="images/icons/nuxt.svg" class="skill-icon" alt="">
-                  <span>Nuxt 4</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="ネットワーク（CCNA）" data-desc="社内SE・インフラ運用を見据え、年内取得レベルの到達を目指して基礎から学習中。">
-                  <img src="images/icons/ccna.svg" class="skill-icon" alt="">
-                  <span>ネットワーク (CCNA)</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <!-- カテゴリ2：言語・データベース（開発経験） -->
-          <div class="skill-group">
-            <h3 class="skill-group-title">Languages &amp; DB（開発経験）</h3>
-            <ul class="skill-list">
-              <li>
-                <button type="button" class="skill-badge" data-skill="HTML5 / CSS3" data-desc="葬儀社向けWebシステムでの画面実装経験をベースに、Grid/Flexbox・コンテナクエリ等のモダン設計に対応。">
-                  <img src="images/icons/html.svg" class="skill-icon" alt="">
-                  <span>HTML / CSS</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="JavaScript (jQuery)" data-desc="Web開発や保守でDOM操作・画面実装を担当。肥大化したJSのリファクタリングでコード量を50%以下に削減。">
-                  <img src="images/icons/js.svg" class="skill-icon" alt="">
-                  <span>JavaScript</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="C# (.NET / VB.NET)" data-desc="自治体関連システム（Visual C# 2015 / 3ヶ月）にて要件〜詳細設計・実装、また保守案件でVB.NETを担当。">
-                  <img src="images/icons/csharp.svg" class="skill-icon" alt="">
-                  <span>C# / VB.NET</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Java (Spring 4)" data-desc="葬儀社向け見積システム（9ヶ月）にて基本・詳細設計〜コーディング・デバッグを担当（Tomcat環境）。">
-                  <img src="images/icons/java.svg" class="skill-icon" alt="">
-                  <span>Java</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="PHP" data-desc="Webシステムのサーバーサイド改修・機能実装で使用。">
-                  <img src="images/icons/php.svg" class="skill-icon" alt="">
-                  <span>PHP</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Ruby on Rails" data-desc="MVCアーキテクチャを用いたWebアプリ開発を習得（Ruby技術者認定試験 Silver 合格）。">
-                  <img src="images/icons/rails.svg" class="skill-icon" alt="">
-                  <span>Ruby on Rails</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="SQL (MySQL / SQL Server / Oracle)" data-desc="各開発・保守案件において MySQL・SQL Server・Oracle を用いたデータ設計・検索・連携を経験。">
-                  <img src="images/icons/sql.svg" class="skill-icon" alt="">
-                  <span>SQL</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <!-- カテゴリ3：環境・業務効率化・AI -->
-          <div class="skill-group">
-            <h3 class="skill-group-title">Tools &amp; Platforms（環境・業務効率化・AI）</h3>
-            <ul class="skill-list">
-              <li>
-                <button type="button" class="skill-badge" data-skill="AI活用（業務効率化・調査）" data-desc="生成AIを活用した業務手順書の整理・トラブル調査・コード作成補助など、実務に活かせる使い方を実践。">
-                  <img src="images/icons/ai.svg" class="skill-icon" alt="">
-                  <span>AI活用</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="GAS（Google Apps Script）" data-desc="スプレッドシート等の手作業集計や定型処理をスクリプト化し、現場の工数削減・業務改善を提案。">
-                  <img src="images/icons/gas.svg" class="skill-icon" alt="">
-                  <span>GAS (業務自動化)</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Google Workspace" data-desc="小中高のICT支援（3年6ヶ月）にて端末・アカウント運用や校務デジタル化の推進を担当。">
-                  <img src="images/icons/gws.svg" class="skill-icon" alt="">
-                  <span>Google Workspace</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Microsoft 365" data-desc="教育・自治体現場での導入・運用支援、教職員向けマニュアル作成やQA対応を担当。">
-                  <img src="images/icons/m365.svg" class="skill-icon" alt="">
-                  <span>Microsoft 365</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="CentOS 7 / Windows Server" data-desc="CentOS 7 + Apache Tomcat でのWebシステム構築や、Windows Server + IBM MQ 環境の運用保守を経験。">
-                  <img src="images/icons/linux.svg" class="skill-icon" alt="">
-                  <span>CentOS 7 / Server</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="skill-badge" data-skill="Git / Subversion" data-desc="チーム開発でのバージョン管理（開発案件ではSubversion、現在はGit / VS Codeを使用）。">
-                  <img src="images/icons/git.svg" class="skill-icon" alt="">
-                  <span>Git / SVN</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <!-- インタラクティブ詳細表示モニター -->
-          <div class="skill-detail-box" aria-live="polite">
-            <span class="detail-title" id="skill-detail-title">Vue.js</span>
-            <p class="detail-desc" id="skill-detail-desc">コンポーネント指向のUI設計、リアクティブな状態管理を学習中。</p>
-          </div>
-        </section>
-
-        <!-- ▼ Status & Links：福岡の現在天気（Open-Meteo API）＋ 外部リンク・連絡先ダミー枠 -->
-        <section id="weather" class="bento-card bento-weather">
-          <div class="card-header">
-            <h2>Status &amp; Links</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-
-          <!-- 上部：現在の天気（福岡） -->
-          <div class="weather-box">
-            <div class="weather-box-head">
-              <span class="weather-location">Fukuoka, JP</span>
-              <a class="weather-credit-link" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
-                Open-Meteo
-              </a>
-            </div>
-            <div id="weather-body" class="weather-body" aria-live="polite">
-              <p class="weather-status">天気情報を取得中...</p>
-            </div>
-          </div>
-
-          <!-- 下部：外部リンク・コンタクト先（公開時に href="#" を実際のURLへ差し替え） -->
-          <div class="links-box">
-            <h3 class="links-title">Links &amp; Contact（準備中）</h3>
-            <ul class="social-links">
-              <li>
-                <a href="#" class="social-link" aria-label="GitHub（準備中）">
-                  <span class="social-name">GitHub</span>
-                  <span class="social-note">Code</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="social-link" aria-label="Zenn / Qiita（準備中）">
-                  <span class="social-name">Zenn / Qiita</span>
-                  <span class="social-note">Articles</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="social-link" aria-label="X / LinkedIn（準備中）">
-                  <span class="social-name">X / SNS</span>
-                  <span class="social-note">Log</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="social-link" aria-label="お問い合わせ（準備中）">
-                  <span class="social-name">Contact</span>
-                  <span class="social-note">Mail</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- ▼ Works：各案件を独立したBentoカード（bento-work）として配置。追加時はこのブロックを複製 -->
-        <section id="work-1" class="bento-card bento-work">
-          <div class="card-header">
-            <h2>Work 01</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-          <!-- 画面イメージ枠（画像を差し込む場合は <img src="images/..." alt="..."> をここに入れる） -->
-          <div class="work-thumb">
-            <span>Screen Image (16:9)</span>
-          </div>
-          <h3 class="work-title">本ポートフォリオサイト</h3>
-          <p class="work-desc">
-            フレームワークに頼らず、素の HTML / CSS / JavaScript で Bento レイアウト・制御盤UI・カード並び替え・昼夜モードを実装。
-          </p>
-          <span class="work-tag">HTML / CSS / JS / SVG</span>
-        </section>
-
-        <section id="work-2" class="bento-card bento-work">
-          <div class="card-header">
-            <h2>Work 02</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-          <div class="work-thumb">
-            <span>Screen Image (16:9)</span>
-          </div>
-          <h3 class="work-title">教育現場の校務・ICT運用改善</h3>
-          <p class="work-desc">
-            小中高の現場にて GIGA端末の運用ルール策定や、手作業集計のボトルネックに対するツール・GAS活用の効率化を提案。
-          </p>
-          <span class="work-tag">Google Workspace / GAS / 業務改善</span>
-        </section>
-
-        <section id="work-3" class="bento-card bento-work">
-          <div class="card-header">
-            <h2>Work 03</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-          <div class="work-thumb">
-            <span>Screen Image (16:9)</span>
-          </div>
-          <h3 class="work-title">業務・Webシステム開発／保守</h3>
-          <p class="work-desc">
-            見積もり・自治体向けシステム等の設計〜実装を担当。肥大化したJavaScriptのコード量を50%以下に削減し、運用手順書も全面刷新。
-          </p>
-          <span class="work-tag">Java / C# / JS / SQL</span>
-        </section>
-
-        <section id="about" class="bento-card bento-wide">
-          <div class="card-header">
-            <h2>About Me</h2>
-            <button type="button" class="drag-handle" aria-label="カードを並び替える" title="ドラッグして移動">
-              <svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#icon-drag-handle" /></svg>
-            </button>
-          </div>
-          <div class="about-grid">
-            <!-- 左：職務経歴サマリー -->
-            <div class="about-block">
-              <h3 class="about-subtitle">Career（主な経歴）</h3>
-              <ul class="timeline-list">
+            <!-- カテゴリ1：現在学習中 -->
+            <div class="skill-group">
+              <h3 class="skill-group-title">Currently Learning（学習中）</h3>
+              <ul class="skill-list">
                 <li>
-                  <span class="timeline-period">2022 - 現在</span>
-                  <span class="timeline-text">小・中・高等学校 ICT支援員（端末管理・校務DX・教職員サポート）</span>
+                  <button
+                    type="button"
+                    class="skill-badge is-active"
+                    data-skill="Vue.js"
+                    data-desc="コンポーネント指向のUI設計、リアクティブな状態管理を学習中。"
+                  >
+                    <img src="images/icons/vue.svg" class="skill-icon" alt="" />
+                    <span>Vue.js</span>
+                  </button>
                 </li>
                 <li>
-                  <span class="timeline-period">2018 - 2021</span>
-                  <span class="timeline-text">市役所 自治体DX支援・窓口業務（小規模事業者向けIT導入相談）</span>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Nuxt 4"
+                    data-desc="最新のディレクトリ構成やSSR/SSGの仕組み、モダンなフロントエンド開発を習得中。"
+                  >
+                    <img
+                      src="images/icons/nuxt.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>Nuxt 4</span>
+                  </button>
                 </li>
                 <li>
-                  <span class="timeline-period">2015 - 2017</span>
-                  <span class="timeline-text">ソフトウェア開発（C# / Java / JavaScript による業務・Web開発）</span>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="ネットワーク（CCNA）"
+                    data-desc="社内SE・インフラ運用を見据え、年内取得レベルの到達を目指して基礎から学習中。"
+                  >
+                    <img
+                      src="images/icons/ccna.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>ネットワーク (CCNA)</span>
+                  </button>
                 </li>
               </ul>
             </div>
 
-            <!-- 右：保有資格 & 評価 -->
-            <div class="about-block">
-              <h3 class="about-subtitle">Certifications &amp; Score（資格・評価）</h3>
-              <ul class="cert-list">
-                <li>基本情報技術者試験 合格（2015年）</li>
-                <li>Paiza スキルチェック RankA（2017年時点）</li>
-                <li>Ruby技術者認定試験 Silver 合格（2017年）</li>
-                <li>第二種電気工事士（2013年）／ 普通自動車免許（2009年）</li>
+            <!-- カテゴリ2：言語・データベース（開発経験） -->
+            <div class="skill-group">
+              <h3 class="skill-group-title">Languages &amp; DB（開発経験）</h3>
+              <ul class="skill-list">
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="HTML5 / CSS3"
+                    data-desc="葬儀社向けWebシステムでの画面実装経験をベースに、Grid/Flexbox・コンテナクエリ等のモダン設計に対応。"
+                  >
+                    <img
+                      src="images/icons/html.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>HTML / CSS</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="JavaScript (jQuery)"
+                    data-desc="Web開発や保守でDOM操作・画面実装を担当。肥大化したJSのリファクタリングでコード量を50%以下に削減。"
+                  >
+                    <img src="images/icons/js.svg" class="skill-icon" alt="" />
+                    <span>JavaScript</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="C# (.NET / VB.NET)"
+                    data-desc="自治体関連システム（Visual C# 2015 / 3ヶ月）にて要件〜詳細設計・実装、また保守案件でVB.NETを担当。"
+                  >
+                    <img
+                      src="images/icons/csharp.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>C# / VB.NET</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Java (Spring 4)"
+                    data-desc="葬儀社向け見積システム（9ヶ月）にて基本・詳細設計〜コーディング・デバッグを担当（Tomcat環境）。"
+                  >
+                    <img
+                      src="images/icons/java.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>Java</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="PHP"
+                    data-desc="Webシステムのサーバーサイド改修・機能実装で使用。"
+                  >
+                    <img src="images/icons/php.svg" class="skill-icon" alt="" />
+                    <span>PHP</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Ruby on Rails"
+                    data-desc="MVCアーキテクチャを用いたWebアプリ開発を習得（Ruby技術者認定試験 Silver 合格）。"
+                  >
+                    <img
+                      src="images/icons/rails.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>Ruby on Rails</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="SQL (MySQL / SQL Server / Oracle)"
+                    data-desc="各開発・保守案件において MySQL・SQL Server・Oracle を用いたデータ設計・検索・連携を経験。"
+                  >
+                    <img src="images/icons/sql.svg" class="skill-icon" alt="" />
+                    <span>SQL</span>
+                  </button>
+                </li>
               </ul>
             </div>
-          </div>
-        </section>
-      </div>
-    </main>
 
-    <!-- フッター -->
-    <footer class="site-footer">
-      <p>&copy; 2026 teppee / BoxBot.Folio</p>
-    </footer>
+            <!-- カテゴリ3：環境・業務効率化・AI -->
+            <div class="skill-group">
+              <h3 class="skill-group-title">
+                Tools &amp; Platforms（環境・業務効率化・AI）
+              </h3>
+              <ul class="skill-list">
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="AI活用（業務効率化・調査）"
+                    data-desc="生成AIを活用した業務手順書の整理・トラブル調査・コード作成補助など、実務に活かせる使い方を実践。"
+                  >
+                    <img src="images/icons/ai.svg" class="skill-icon" alt="" />
+                    <span>AI活用</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="GAS（Google Apps Script）"
+                    data-desc="スプレッドシート等の手作業集計や定型処理をスクリプト化し、現場の工数削減・業務改善を提案。"
+                  >
+                    <img src="images/icons/gas.svg" class="skill-icon" alt="" />
+                    <span>GAS (業務自動化)</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Google Workspace"
+                    data-desc="小中高のICT支援（3年6ヶ月）にて端末・アカウント運用や校務デジタル化の推進を担当。"
+                  >
+                    <img src="images/icons/gws.svg" class="skill-icon" alt="" />
+                    <span>Google Workspace</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Microsoft 365"
+                    data-desc="教育・自治体現場での導入・運用支援、教職員向けマニュアル作成やQA対応を担当。"
+                  >
+                    <img
+                      src="images/icons/m365.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>Microsoft 365</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="CentOS 7 / Windows Server"
+                    data-desc="CentOS 7 + Apache Tomcat でのWebシステム構築や、Windows Server + IBM MQ 環境の運用保守を経験。"
+                  >
+                    <img
+                      src="images/icons/linux.svg"
+                      class="skill-icon"
+                      alt=""
+                    />
+                    <span>CentOS 7 / Server</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    class="skill-badge"
+                    data-skill="Git / Subversion"
+                    data-desc="チーム開発でのバージョン管理（開発案件ではSubversion、現在はGit / VS Codeを使用）。"
+                  >
+                    <img src="images/icons/git.svg" class="skill-icon" alt="" />
+                    <span>Git / SVN</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
 
-  </div>
-</body>
+            <!-- インタラクティブ詳細表示モニター -->
+            <div class="skill-detail-box">
+              <span class="detail-title" id="skill-detail-title">Vue.js</span>
+              <p class="detail-desc" id="skill-detail-desc">
+                コンポーネント指向のUI設計、リアクティブな状態管理を学習中。
+              </p>
+            </div>
+          </section>
+
+          <!-- ▼ Works：各案件を独立したBentoカード（<article>）として配置。追加時はこのブロックを複製 -->
+          <article id="work-1" class="bento-card bento-work">
+            <div class="card-header">
+              <span class="work-label">Work 01</span>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+            <!-- 画面イメージ枠（画像を差し込む場合は <img src="images/..." alt="..."> をここに入れる） -->
+            <div class="work-thumb">
+              <span>Screen Image (16:9)</span>
+            </div>
+            <h2 class="work-title">本ポートフォリオサイト</h2>
+            <p class="work-desc">
+              現場での定着を意識した「部品化×カスタマイズUI」の試作。フレームワークに頼らず素の
+              HTML / CSS / JS
+              で、ドラッグ並び替え・非表示・昼夜テーマ保存・天気API連携・コンテナクエリ等を実装し、保守性の高い構造に仕上げています。
+            </p>
+            <div class="work-footer">
+              <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
+              <a href="#" class="work-link">GitHub（準備中） →</a>
+            </div>
+          </article>
+
+          <article id="work-2" class="bento-card bento-work">
+            <div class="card-header">
+              <span class="work-label">Work 02</span>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="work-thumb">
+              <span>Screen Image (16:9)</span>
+            </div>
+            <h2 class="work-title">医療系サイト（課題制作）</h2>
+            <p class="work-desc">
+              清潔感と信頼性を意識したクリニック・医療系Webサイトの制作課題。初診の方でも迷わず診療案内やアクセスに辿り着ける情報設計と、スマホ・PC両対応のレイアウトで実装予定。
+            </p>
+            <div class="work-footer">
+              <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
+              <a href="#" class="work-link">View Site（準備中） →</a>
+            </div>
+          </article>
+
+          <article id="work-3" class="bento-card bento-work">
+            <div class="card-header">
+              <span class="work-label">Work 03</span>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="work-thumb">
+              <span>Screen Image (16:9)</span>
+            </div>
+            <h2 class="work-title">飲食店サイト（課題制作）</h2>
+            <p class="work-desc">
+              メニューや店舗の雰囲気を視覚的に伝える飲食店Webサイトの制作課題。CSS変数を用いた配色管理や、画面幅に応じたカード配置・メニュー表示の切り替えを取り入れて制作予定。
+            </p>
+            <div class="work-footer">
+              <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
+              <a href="#" class="work-link">View Site（準備中） →</a>
+            </div>
+          </article>
+
+          <section id="about" class="bento-card bento-wide">
+            <div class="card-header">
+              <h2>About Me</h2>
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="drag-handle"
+                  title="ドラッグして移動"
+                >
+                  <svg width="16" height="16" fill="currentColor">
+                    <use href="#icon-drag-handle" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="hide-card-btn"
+                  title="このカードを非表示にする"
+                >
+                  <svg width="16" height="16"><use href="#icon-close" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="about-grid">
+              <!-- 左：職務経歴サマリー -->
+              <div class="about-block">
+                <h3 class="about-subtitle">Career（主な経歴）</h3>
+                <ul class="timeline-list">
+                  <li>
+                    <span class="timeline-period">2022 - 現在</span>
+                    <span class="timeline-text"
+                      >小・中・高等学校
+                      ICT支援員（GIGA端末管理・教職員サポートに加え、手作業集計のボトルネックに対するツール・GAS活用の効率化を提案）</span
+                    >
+                  </li>
+                  <li>
+                    <span class="timeline-period">2018 - 2021</span>
+                    <span class="timeline-text"
+                      >市役所
+                      自治体DX支援・窓口業務（小規模事業者向けIT導入相談）</span
+                    >
+                  </li>
+                  <li>
+                    <span class="timeline-period">2015 - 2017</span>
+                    <span class="timeline-text"
+                      >ソフトウェア開発（C# / Java / JavaScript
+                      による業務・Web開発）</span
+                    >
+                  </li>
+                </ul>
+              </div>
+
+              <!-- 右：保有資格 & 評価 -->
+              <div class="about-block">
+                <h3 class="about-subtitle">
+                  Certifications &amp; Score（資格・評価）
+                </h3>
+                <ul class="cert-list">
+                  <li>基本情報技術者試験 合格（2015年）</li>
+                  <li>Paiza スキルチェック RankA（2017年時点）</li>
+                  <li>Ruby技術者認定試験 Silver 合格（2017年）</li>
+                  <li>第二種電気工事士（2013年）</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- フッター -->
+      <footer class="site-footer">
+        <p>&copy; 2026 teppee / BoxBot.Folio</p>
+      </footer>
+    </div>
+  </body>
 </html>
