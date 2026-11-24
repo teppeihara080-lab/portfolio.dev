@@ -2,7 +2,7 @@
 
 「仕組みを考える」論理的思考と「使う・支える」現場感覚を掛け合わせた、teppee のポートフォリオサイトです。
 
-🔗 **公開URL**: boxbot-folio.vercel.app
+🔗 **公開URL**: [boxbot-folio.vercel.app](https://boxbot-folio.vercel.app/)
 
 ---
 
