@@ -174,6 +174,7 @@ function initBentoDragAndDrop() {
   if (!grid) return;
 
   const ORDER_STORAGE_KEY = 'portfolio-bento-order';
+  const MOBILE_ORDER_STORAGE_KEY = 'portfolio-mobile-order';
   const HIDDEN_STORAGE_KEY = 'portfolio-bento-hidden';
   const DRAG_THRESHOLD = 8; // ドラッグ開始とみなす最小移動距離（px）
   const resetBtn = document.getElementById('reset-order-btn');
@@ -181,8 +182,9 @@ function initBentoDragAndDrop() {
   // ページ読み込み時点（HTMLどおり）の初期順を控えておく（リセットボタン用）
   const initialOrder = getGridOrder(grid);
 
-  // 前回保存したカードの並び順・非表示状態があれば復元する
+  // 前回保存したカードの並び順・スマホ用並び順・非表示状態があれば復元する
   restoreCardOrder(grid, ORDER_STORAGE_KEY);
+  restoreMobileOrder(grid, MOBILE_ORDER_STORAGE_KEY);
   restoreHiddenCards(grid, HIDDEN_STORAGE_KEY);
 
   // 並び順が変わっている、または非表示カードが1つでもある時だけ「配置リセット」ボタンを表示
@@ -190,21 +192,24 @@ function initBentoDragAndDrop() {
     if (!resetBtn) return;
     const currentOrder = getGridOrder(grid);
     const isOrderModified = currentOrder.some((id, index) => id !== initialOrder[index]);
+    const isMobileModified = Boolean(localStorage.getItem(MOBILE_ORDER_STORAGE_KEY));
     const hasHiddenCards = grid.querySelector('.bento-card.is-hidden') !== null;
-    resetBtn.hidden = !(isOrderModified || hasHiddenCards);
+    resetBtn.hidden = !(isOrderModified || isMobileModified || hasHiddenCards);
   };
   updateResetButton();
 
-  // リセットボタンが押されたら、並び順も非表示状態もすべて初期状態に戻す
+  // リセットボタンが押されたら、並び順（PC/スマホ両方）も非表示状態もすべて初期状態に戻す
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       localStorage.removeItem(ORDER_STORAGE_KEY);
+      localStorage.removeItem(MOBILE_ORDER_STORAGE_KEY);
       localStorage.removeItem(HIDDEN_STORAGE_KEY);
 
       initialOrder.forEach((id) => {
         const card = grid.querySelector(`.bento-card[id="${id}"]`);
         if (card) {
           card.classList.remove('is-hidden');
+          card.style.order = '';
           grid.appendChild(card);
         }
       });
@@ -212,17 +217,28 @@ function initBentoDragAndDrop() {
     });
   }
 
-  // 各カードの「×（非表示）」ボタンが押されたらカードを隠す（CSS Gridが自動で隙間を詰める）
+  // 各カードの「×（非表示）」ボタン、およびスマホ用の「↑ / ↓（上下移動）」ボタンを処理する
   grid.addEventListener('click', (e) => {
     const hideBtn = e.target.closest('.hide-card-btn');
-    if (!hideBtn) return;
+    if (hideBtn) {
+      const card = hideBtn.closest('.bento-card');
+      if (!card || card.parentNode !== grid) return;
 
-    const card = hideBtn.closest('.bento-card');
-    if (!card || card.parentNode !== grid) return;
+      card.classList.add('is-hidden');
+      saveHiddenCards(grid, HIDDEN_STORAGE_KEY);
+      updateResetButton();
+      return;
+    }
 
-    card.classList.add('is-hidden');
-    saveHiddenCards(grid, HIDDEN_STORAGE_KEY);
-    updateResetButton();
+    const moveBtn = e.target.closest('.move-card-btn');
+    if (moveBtn) {
+      const card = moveBtn.closest('.bento-card');
+      if (!card || card.parentNode !== grid) return;
+
+      const direction = moveBtn.classList.contains('move-up-btn') ? -1 : 1;
+      moveCardMobile(grid, card, direction, MOBILE_ORDER_STORAGE_KEY);
+      updateResetButton();
+    }
   });
 
   let dragState = null;
@@ -408,6 +424,70 @@ function restoreHiddenCards(grid, storageKey) {
     });
   } catch {
     // 保存データが壊れていた場合は無視する
+  }
+}
+
+/**
+ * スマホ表示用：現在の見た目の並び順（CSSのorder値）を取得し、1つ上または下と入れ替える
+ * ※DOMの順番自体は触らないため、PC表示のBentoレイアウトやドラッグ順には影響しません
+ */
+function moveCardMobile(grid, targetCard, direction, storageKey) {
+  const allCards = Array.from(grid.querySelectorAll('.bento-card'));
+
+  // 現在画面に適用されている CSS の order 値でカードを並べる（同じorder同士は元の順番を維持）
+  const orderedAll = allCards
+    .map((card, index) => ({
+      card,
+      order: parseInt(getComputedStyle(card).order, 10) || 0,
+      index,
+    }))
+    .sort((a, b) => a.order - b.order || a.index - b.index)
+    .map((item) => item.card);
+
+  // 非表示（is-hidden）でない「今見えているカード」だけを対象に入れ替え先を探す
+  const visibleCards = orderedAll.filter((card) => !card.classList.contains('is-hidden'));
+  const currentPos = visibleCards.indexOf(targetCard);
+  const nextPos = currentPos + direction;
+
+  if (currentPos < 0 || nextPos < 0 || nextPos >= visibleCards.length) return;
+
+  const swapTarget = visibleCards[nextPos];
+  const idxA = orderedAll.indexOf(targetCard);
+  const idxB = orderedAll.indexOf(swapTarget);
+  [orderedAll[idxA], orderedAll[idxB]] = [orderedAll[idxB], orderedAll[idxA]];
+
+  // 全カードに新しい order 番号（1, 2, 3...）を振り直して保存する
+  const orderIds = [];
+  orderedAll.forEach((card, i) => {
+    card.style.order = String(i + 1);
+    if (card.id) orderIds.push(card.id);
+  });
+  localStorage.setItem(storageKey, JSON.stringify(orderIds));
+}
+
+/**
+ * localStorage に保存されたスマホ用の並び順（order値）を復元する
+ */
+function restoreMobileOrder(grid, storageKey) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    if (!Array.isArray(saved)) return;
+
+    const currentIds = getGridOrder(grid);
+    const isSameStructure =
+      saved.length === currentIds.length && currentIds.every((id) => saved.includes(id));
+
+    if (!isSameStructure) {
+      localStorage.removeItem(storageKey);
+      return;
+    }
+
+    saved.forEach((id, index) => {
+      const card = grid.querySelector(`.bento-card[id="${id}"]`);
+      if (card) card.style.order = String(index + 1);
+    });
+  } catch {
+    // 保存データが壊れていた場合は初期順のまま表示する
   }
 }
 
@@ -604,12 +684,12 @@ function renderWeatherContent(container, { icon, label, temp, humidity }) {
    7. お問い合わせモーダル（Formspree連携）の制御機能
    ========================================================================== */
 function initContactModal() {
-  const modal = document.getElementById('contactModal');
-  const openBtn = document.getElementById('openContactModal');
-  const closeBtn = document.getElementById('closeContactModal');
-  const form = document.getElementById('contactForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const statusText = document.getElementById('formStatus');
+  const modal = document.getElementById('contact-modal');
+  const openBtn = document.getElementById('open-contact-modal');
+  const closeBtn = document.getElementById('close-contact-modal');
+  const form = document.getElementById('contact-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const statusText = document.getElementById('form-status');
 
   // 必要な要素が揃っていない場合は何もしない（安全対策）
   if (!modal || !openBtn || !form) return;

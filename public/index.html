@@ -161,6 +161,30 @@
       >
         <path d="M4 4l8 8M12 4l-8 8" />
       </symbol>
+
+      <!-- スマホ用カード移動（上矢印 / 下矢印）アイコン -->
+      <symbol
+        id="icon-arrow-up"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 10l4-4 4 4" />
+      </symbol>
+      <symbol
+        id="icon-arrow-down"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 6l4 4 4-4" />
+      </symbol>
     </svg>
 
     <!-- ▼ ページ全体の外側Gridコンテナ -->
@@ -277,6 +301,24 @@
               <div class="card-actions">
                 <button
                   type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   class="drag-handle"
                   title="ドラッグして移動"
                 >
@@ -376,6 +418,24 @@
               <div class="card-actions">
                 <button
                   type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   class="drag-handle"
                   title="ドラッグして移動"
                 >
@@ -445,25 +505,56 @@
                 </h3>
                 <ul class="social-links">
                   <li>
-                    <a href="https://github.com/teppeihara080-lab" class="social-link" target="_blank" rel="noopener noreferrer">
-                      <span class="social-name">GitHub<span class="external-icon" aria-hidden="true">↗</span></span>
+                    <a
+                      href="https://github.com/teppeihara080-lab"
+                      class="social-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="social-name"
+                        >GitHub<span class="external-icon" aria-hidden="true"
+                          >↗</span
+                        ></span
+                      >
                       <span class="social-note">Code</span>
                     </a>
                   </li>
                   <li>
-                    <a href="https://qiita.com/" class="social-link" target="_blank" rel="noopener noreferrer">
-                      <span class="social-name">Qiita<span class="external-icon" aria-hidden="true">↗</span></span>
+                    <a
+                      href="https://qiita.com/"
+                      class="social-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="social-name"
+                        >Qiita<span class="external-icon" aria-hidden="true"
+                          >↗</span
+                        ></span
+                      >
                       <span class="social-note">Articles</span>
                     </a>
                   </li>
                   <li>
-                    <a href="https://bsky.app/" class="social-link" target="_blank" rel="noopener noreferrer">
-                      <span class="social-name">Bluesky<span class="external-icon" aria-hidden="true">↗</span></span>
+                    <a
+                      href="https://bsky.app/"
+                      class="social-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span class="social-name"
+                        >Bluesky<span class="external-icon" aria-hidden="true"
+                          >↗</span
+                        ></span
+                      >
                       <span class="social-note">SNS</span>
                     </a>
                   </li>
                   <li>
-                    <button type="button" id="openContactModal" class="social-link">
+                    <button
+                      type="button"
+                      id="open-contact-modal"
+                      class="social-link"
+                    >
                       <span class="social-name">Contact</span>
                       <span class="social-note">Mail</span>
                     </button>
@@ -478,6 +569,24 @@
             <div class="card-header">
               <h2>BoxBot</h2>
               <div class="card-actions">
+                <button
+                  type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
                 <button
                   type="button"
                   class="drag-handle"
@@ -539,6 +648,24 @@
             <div class="card-header">
               <h2>Skills</h2>
               <div class="card-actions">
+                <button
+                  type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
                 <button
                   type="button"
                   class="drag-handle"
@@ -805,6 +932,24 @@
               <div class="card-actions">
                 <button
                   type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   class="drag-handle"
                   title="ドラッグして移動"
                 >
@@ -823,7 +968,11 @@
             </div>
             <!-- 画面イメージ枠（画像を差し込む場合は <img src="images/..." alt="..."> をここに入れる） -->
             <div class="work-thumb">
-              <img src="images/work-01.webp" alt="本ポートフォリオサイトのトップページ画面" loading="lazy">
+              <img
+                src="images/work-01.webp"
+                alt="本ポートフォリオサイトのトップページ画面"
+                loading="lazy"
+              />
             </div>
             <h2 class="work-title">本ポートフォリオサイト</h2>
             <p class="work-desc">
@@ -833,7 +982,13 @@
             </p>
             <div class="work-footer">
               <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
-              <a href="https://github.com/teppeihara080-lab/portfolio.dev" class="work-link" target="_blank" rel="noopener noreferrer">GitHub →</a>
+              <a
+                href="https://github.com/teppeihara080-lab/portfolio.dev"
+                class="work-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub →</a
+              >
             </div>
           </article>
 
@@ -843,6 +998,24 @@
               <div class="card-actions">
                 <button
                   type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   class="drag-handle"
                   title="ドラッグして移動"
                 >
@@ -860,7 +1033,11 @@
               </div>
             </div>
             <div class="work-thumb">
-              <img src="images/work-02.webp" alt="医療系サイトのトップページ画面" loading="lazy">
+              <img
+                src="images/work-02.webp"
+                alt="医療系サイトのトップページ画面"
+                loading="lazy"
+              />
             </div>
             <h2 class="work-title">医療系サイト（課題制作）</h2>
             <p class="work-desc">
@@ -868,7 +1045,13 @@
             </p>
             <div class="work-footer">
               <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
-              <a href="https://kunren-web.com/busiweb0606/site2/21ht/" class="work-link" target="_blank" rel="noopener noreferrer">View Site →</a>
+              <a
+                href="https://kunren-web.com/busiweb0606/site2/21ht/"
+                class="work-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                >View Site →</a
+              >
             </div>
           </article>
 
@@ -878,6 +1061,24 @@
               <div class="card-actions">
                 <button
                   type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   class="drag-handle"
                   title="ドラッグして移動"
                 >
@@ -895,7 +1096,11 @@
               </div>
             </div>
             <div class="work-thumb">
-              <img src="images/work-03.webp" alt="飲食店サイトのトップページ画面" loading="lazy">
+              <img
+                src="images/work-03.webp"
+                alt="飲食店サイトのトップページ画面"
+                loading="lazy"
+              />
             </div>
             <h2 class="work-title">飲食店サイト（課題制作）</h2>
             <p class="work-desc">
@@ -903,7 +1108,13 @@
             </p>
             <div class="work-footer">
               <span class="work-tag">HTML / CSS / JS / レスポンシブ</span>
-              <a href="https://kunren-web.com/busiweb0606/food/21ht/" class="work-link" target="_blank" rel="noopener noreferrer">View Site →</a>
+              <a
+                href="https://kunren-web.com/busiweb0606/food/21ht/"
+                class="work-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                >View Site →</a
+              >
             </div>
           </article>
 
@@ -911,6 +1122,24 @@
             <div class="card-header">
               <h2>About Me</h2>
               <div class="card-actions">
+                <button
+                  type="button"
+                  class="move-card-btn move-up-btn"
+                  title="1つ上へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-up" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="move-card-btn move-down-btn"
+                  title="1つ下へ移動"
+                >
+                  <svg width="16" height="16">
+                    <use href="#icon-arrow-down" />
+                  </svg>
+                </button>
                 <button
                   type="button"
                   class="drag-handle"
@@ -981,36 +1210,67 @@
       </footer>
     </div>
 
-    <!-- </body> の直前に追加：お問い合わせモーダル -->
-    <div id="contactModal" class="modal-overlay" aria-hidden="true">
-      <div class="modal-card" role="dialog" aria-labelledby="modalTitle">
+    <!-- お問い合わせモーダル -->
+    <div id="contact-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-labelledby="modal-title">
         <div class="modal-header">
-          <h3 id="modalTitle">Contact</h3>
-          <button type="button" id="closeContactModal" class="modal-close" aria-label="閉じる">×</button>
+          <h3 id="modal-title">Contact</h3>
+          <button
+            type="button"
+            id="close-contact-modal"
+            class="modal-close"
+            aria-label="閉じる"
+          >
+            ×
+          </button>
         </div>
 
         <!-- action には発行したURLを入れてる -->
-        <form id="contactForm" action="https://formspree.io/f/xkjrpene" method="POST">
+        <form
+          id="contact-form"
+          action="https://formspree.io/f/xkjrpene"
+          method="POST"
+        >
           <div class="form-group">
-            <label for="senderName">お名前 / 貴社名</label>
-            <input type="text" id="senderName" name="name" required placeholder="例：山田 太郎 / 株式会社〇〇">
+            <label for="sender-name">お名前 / 貴社名</label>
+            <input
+              type="text"
+              id="sender-name"
+              name="name"
+              required
+              placeholder="例：山田 太郎 / 株式会社〇〇"
+            />
           </div>
 
           <div class="form-group">
-            <label for="senderEmail">メールアドレス</label>
-            <input type="email" id="senderEmail" name="email" required placeholder="example@domain.com">
+            <label for="sender-email">メールアドレス</label>
+            <input
+              type="email"
+              id="sender-email"
+              name="email"
+              required
+              placeholder="example@domain.com"
+            />
           </div>
 
           <div class="form-group">
-            <label for="senderMessage">お問い合わせ内容</label>
-            <textarea id="senderMessage" name="message" rows="4" required placeholder="採用や面談のご連絡など、お気軽にお送りください。"></textarea>
+            <label for="sender-message">お問い合わせ内容</label>
+            <textarea
+              id="sender-message"
+              name="message"
+              rows="4"
+              required
+              placeholder="採用や面談のご連絡など、お気軽にお送りください。"
+            ></textarea>
           </div>
 
           <!-- スパム対策用の隠しフィールド（人間には見えずボットだけ引っかかる罠） -->
-          <input type="text" name="_gotcha" style="display:none">
+          <input type="text" name="_gotcha" style="display: none" />
 
-          <button type="submit" id="submitBtn" class="btn-submit">送信する</button>
-          <p id="formStatus" class="form-status" role="status"></p>
+          <button type="submit" id="submit-btn" class="btn-submit">
+            送信する
+          </button>
+          <p id="form-status" class="form-status" role="status"></p>
         </form>
       </div>
     </div>
