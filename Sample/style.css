@@ -992,6 +992,19 @@ body.is-card-dragging {
   text-decoration: none;
   transition: border-color 0.15s ease, transform 0.15s ease, background-color 0.25s ease;
 }
+/* <button> を使った .social-link を <a> と同じ見た目に揃える */
+button.social-link {
+  width: 100%;
+  height: 100%; /* 親の <li> の高さに合わせる */
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit; /* ブラウザ標準のボタン行間をリセット */
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
 
 .social-link:hover {
   border-color: var(--accent);
@@ -1009,7 +1022,19 @@ body.is-card-dragging {
   color: var(--text-muted);
 }
 
+.external-icon {
+  display: inline-block;
+  font-size: 0.75em;
+  color: var(--text-muted);
+  margin-left: 2px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
 
+/* ホバー時に矢印が右上へ少し動くマイクロインタラクション */
+.social-link:hover .external-icon {
+  transform: translate(2px, -2px);
+  color: var(--accent-color, #2563eb);
+}
 /* ==========================================================================
    8. Works・Aboutカード専用部品（独立Workカード＆年表）
    ========================================================================== */
@@ -1322,4 +1347,103 @@ body.is-card-dragging {
   .site-footer {
     padding-bottom: 32px;
   }
+}
+
+/* モーダル背景 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 1000;
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================================================
+   11. お問合せフォーム
+   ========================================================================== */
+/* モーダル本体（ポートフォリオのカードデザインに合わせる） */
+.modal-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: var(--bg-card, #ffffff);
+  color: var(--text-main, #1e293b);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* フォーム入力欄 */
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--accent-color, #2563eb);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-status {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  text-align: center;
 }

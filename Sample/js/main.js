@@ -7,7 +7,7 @@ initScrollSpy();
 initBentoDragAndDrop();
 initRobotAvatar();
 initWeatherWidget();
-
+initContactModal();
 
 /* ==========================================================================
    1. 昼夜モード（ライト / ダークテーマ）の切り替え機能
@@ -598,4 +598,94 @@ function renderWeatherContent(container, { icon, label, temp, humidity }) {
   subInfo.append(condEl, humEl);
   wrapper.append(mainInfo, subInfo);
   container.appendChild(wrapper);
+}
+
+/* ==========================================================================
+   7. お問い合わせモーダル（Formspree連携）の制御機能
+   ========================================================================== */
+function initContactModal() {
+  const modal = document.getElementById('contactModal');
+  const openBtn = document.getElementById('openContactModal');
+  const closeBtn = document.getElementById('closeContactModal');
+  const form = document.getElementById('contactForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusText = document.getElementById('formStatus');
+
+  // 必要な要素が揃っていない場合は何もしない（安全対策）
+  if (!modal || !openBtn || !form) return;
+
+  // モーダルを開く関数
+  const openModal = () => {
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    // 開いたときに最初の入力欄へ自動でフォーカスを当てる（使いやすさ向上）
+    form.querySelector('input')?.focus();
+  };
+
+  // モーダルを閉じる関数
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+  };
+
+  // ボタン操作と背景クリック・Escキーで開閉する
+  openBtn.addEventListener('click', openModal);
+  closeBtn?.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  // フォームの非同期送信（ページ遷移なしでFormspreeへ送信する）
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '送信中...';
+    }
+    if (statusText) {
+      statusText.textContent = '';
+    }
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        if (statusText) {
+          statusText.textContent = 'お問い合わせを送信しました。ありがとうございます！';
+        }
+        form.reset();
+        // 2秒後に自動でモーダルを閉じる
+        setTimeout(closeModal, 2000);
+      } else {
+        if (statusText) {
+          statusText.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
+        }
+      }
+    } catch (error) {
+      if (statusText) {
+        statusText.textContent = '通信エラーが発生しました。ネットワーク環境をご確認ください。';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送信する';
+      }
+    }
+  });
 }
