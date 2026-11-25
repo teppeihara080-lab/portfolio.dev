@@ -6,14 +6,14 @@
 
 ## 1. 命名規則（Naming Conventions）
 
-| 対象 | 規則 | 例 |
-| :--- | :--- | :--- |
-| **HTML `id` / `class`** | ケバブケース（`kebab-case`） | `id="contact-modal"`, `class="work-card"` |
-| **状態を表すクラス** | `is-` プレフィックス | `.is-active`, `.is-open`, `.is-hidden` |
-| **CSS カスタムプロパティ** | 役割ベース（セマンティック） | `--bg-body`, `--bg-surface`, `--text-strong`, `--accent` |
-| **JS 変数・関数名** | キャメルケース（`camelCase`） | `initContactModal()`, `applyTheme()` |
-| **JS 定数（設定値）** | アッパーケース（`UPPER_SNAKE_CASE`） | `STORAGE_KEY`, `DRAG_THRESHOLD` |
-| **ファイル・画像名** | 小文字ケバブケース | `work-01.webp`, `pillar-logic.svg` |
+| 対象                       | 規則                                 | 例                                                       |
+| :------------------------- | :----------------------------------- | :------------------------------------------------------- |
+| **HTML `id` / `class`**    | ケバブケース（`kebab-case`）         | `id="contact-modal"`, `class="work-card"`                |
+| **状態を表すクラス**       | `is-` プレフィックス                 | `.is-active`, `.is-open`, `.is-hidden`                   |
+| **CSS カスタムプロパティ** | 役割ベース（セマンティック）         | `--bg-body`, `--bg-surface`, `--text-strong`, `--accent` |
+| **JS 変数・関数名**        | キャメルケース（`camelCase`）        | `initContactModal()`, `applyTheme()`                     |
+| **JS 定数（設定値）**      | アッパーケース（`UPPER_SNAKE_CASE`） | `STORAGE_KEY`, `DRAG_THRESHOLD`                          |
+| **ファイル・画像名**       | 小文字ケバブケース                   | `work-01.webp`, `pillar-logic.svg`                       |
 
 ---
 
@@ -37,12 +37,15 @@
   - 複数箇所で使うUIアイコンはページ上部に非表示の `<svg style="display: none;">` 内で `<symbol id="icon-...">` として定義し、`<use href="#icon-..." />` で呼び出す。
 - **シンプルさの維持**
   - 過剰な属性（説明が難しいレベルの複雑な `aria-*` など）は、要件がない限り無理に入れず、標準HTMLで分かりやすく書く。
+- **閉じタグについて**
+  - svg等で必須でない場合、p,link,metaタグなどのタグの終わりは />ではなく>で統一。
 
 ---
 
 ## 3. CSS 構成ルール（上から順に追える構造）
 
 ### 記述の順番（モバイルファースト）
+
 セクション見出し（`/* ========================================================================== ... */`）を使い、必ず HTML の上から下への流れに沿って並べます。
 
 1. **カラーテーマ変数**：`:root`（昼） / `:root[data-theme="dark"]`（夜）
@@ -55,6 +58,7 @@
 8. **モーダル等のオーバーレイ部品**
 
 ### 実装上のこだわりポイント
+
 - **日本語タイポグラフィ**：漢字の密度を考慮し、本文の `line-height` は `1.7〜1.8`、わずかな `letter-spacing: 0.02em`、ゆとりある `padding` を設定する。
 - **ガタつき防止**：テキストが動的に変わる箱やボタンには、`min-height: calc(1.5em * 行数 + 上下余白)` や `min-width` を設定して周囲のズレを防ぐ。
 - **レスポンシブの工夫**：カード幅によってレイアウトを変えたい時は、`@media` ではなくコンテナクエリ（`container-type: inline-size;` + `@container`）を活用する。
