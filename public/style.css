@@ -17,7 +17,7 @@
   --text-badge-active: #ffffff;
   --text-main: #1f2937;
   --text-strong: #111827;
-  --text-muted: #6b7280;
+  --text-muted: #59606d; /* WCAG AA(4.5:1)を満たすグレー */
   --text-desc: #4b5563;
   --text-nav: #374151;
   --border-color: #e5e7eb;
@@ -27,7 +27,7 @@
   --shadow-drag: 0 20px 30px rgba(0, 0, 0, 0.18);
   --panel-bg: #9e9e9e; /* スマホ制御盤の背景色（グレー塗装） */
   --panel-border: #666666;
-  --handle-color: #9ca3af;
+  --handle-color: #6b7280;
   --handle-hover-text: #374151;
   --bubble-bg: #1f2937; /* ロボットの吹き出し背景（昼は濃い色で引き締める） */
   --bubble-text: #ffffff;
@@ -42,7 +42,7 @@
   --bg-subtle: #0f172a;
   --bg-badge: #334155;
   --bg-badge-hover: #1e3a8a;
-  --bg-badge-active: #3b82f6;
+  --bg-badge-active: #2563eb; /* 白文字とのコントラスト比(5.17:1)を確保 */
   --text-badge-active: #ffffff;
   --text-main: #e2e8f0;
   --text-strong: #f8fafc;
