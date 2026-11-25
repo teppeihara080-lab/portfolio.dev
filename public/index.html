@@ -18,10 +18,19 @@
     <script src="js/main.js" defer></script>
 
     <!-- 3. スタイルシート（外部フォント → 自分のCSSの順） -->
+    <!-- SEO対策の為（初期描画のブロックを回避して表示速度・Lighthouseスコアを改善する目的）、Google FontsはJetBrains Monoのみに絞り非同期読み込みにする -->
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     >
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&display=swap"
+        rel="stylesheet"
+      >
+    </noscript>
     <link rel="stylesheet" href="style.css">
 
     <!-- 4. ページ情報・ブラウザ制御 -->
