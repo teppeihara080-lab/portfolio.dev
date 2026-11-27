@@ -590,7 +590,7 @@ async function initWeatherWidget() {
   const weatherBody = document.getElementById('weather-body');
   if (!weatherBody) return;
 
-  // 福岡（緯度33.5902 / 経度130.4017）の現在の気温・湿度・天気コードを取得するURL
+  // 現在の気温・湿度・天気コードを取得するURL
   const apiUrl =
      'https://api.open-meteo.com/v1/forecast' +
      '?latitude=33.8518&longitude=130.8503' +
