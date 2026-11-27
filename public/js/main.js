@@ -592,10 +592,10 @@ async function initWeatherWidget() {
 
   // 福岡（緯度33.5902 / 経度130.4017）の現在の気温・湿度・天気コードを取得するURL
   const apiUrl =
-    'https://api.open-meteo.com/v1/forecast' +
-    '?latitude=33.5902&longitude=130.4017' +
-    '&current=temperature_2m,relative_humidity_2m,weather_code' +
-    '&timezone=Asia%2FTokyo';
+     'https://api.open-meteo.com/v1/forecast' +
+     '?latitude=33.8518&longitude=130.8503' +
+     '&current=temperature_2m,relative_humidity_2m,weather_code' +
+     '&timezone=Asia%2FTokyo';
 
   try {
     // サーバーへ通信してレスポンスを待つ（非同期処理：await）
